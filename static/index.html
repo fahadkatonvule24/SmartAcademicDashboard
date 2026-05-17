@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IUIU Kampala Campus | NLP Translation</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <div class="portal-nav-row">
+      <a href="/dashboard" class="portal-nav-link">&#8962; Back to Academica ERP Dashboard</a>
+      <span class="portal-nav-meta">IUIU Kampala Campus &middot; Academic Year 2025/2026</span>
+    </div>
+
+    <section class="iuiu-banner" aria-label="IUIU Kampala Campus branding">
+      <div class="brand-lockup">
+        <div class="brand-crest" aria-hidden="true">IUIU</div>
+        <div>
+          <p class="brand-name">Islamic University in Uganda &mdash; Kampala Campus</p>
+          <h2>Academica ERP &middot; NLP Services</h2>
+          <span>Mother-Tongue Translation &amp; Multilingual Student Support Portal</span>
+        </div>
+      </div>
+      <div class="brand-meta">
+        <strong>Academic Support Services</strong>
+        <span>Kampala Campus &middot; 9 Languages Supported</span>
+      </div>
+    </section>
+
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">IUIU Kampala Campus ERP</p>
+        <h1>NLP Translation Portal</h1>
+        <p class="lede">
+          Translate course content for IUIU students using campus profiles, approved terminology,
+          language overrides, and bilingual output.
+        </p>
+        <div class="hero-actions">
+          <button class="ghost-button" id="load-sample-sw">Load Swahili Sample</button>
+          <button class="ghost-button" id="load-sample-fr">Load French Sample</button>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <div class="status-row">
+          <span>API Status</span>
+          <strong id="health-status">Checking...</strong>
+        </div>
+        <div class="status-row">
+          <span>Provider</span>
+          <strong id="provider-status">-</strong>
+        </div>
+        <div class="status-row">
+          <span>Languages</span>
+          <strong id="language-count">-</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="card-head">
+          <p class="kicker">Step 1</p>
+          <h2>Student Profile</h2>
+        </div>
+        <form id="profile-form" class="stack">
+          <label>
+            <span>Student ID</span>
+            <input type="text" id="profile-student-id" value="NLP001" required>
+          </label>
+          <label>
+            <span>Nationality</span>
+            <input type="text" id="profile-nationality" value="Kenya" required>
+          </label>
+          <label>
+            <span>Preferred Language</span>
+            <select id="profile-language">
+              <option value="">Auto from nationality</option>
+            </select>
+          </label>
+          <button type="submit" class="primary-button">Save Profile</button>
+        </form>
+        <pre class="response-box" id="profile-response">No profile request sent yet.</pre>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <p class="kicker">Step 2</p>
+          <h2>Glossary</h2>
+        </div>
+        <form id="glossary-form" class="stack">
+          <label>
+            <span>Course Code</span>
+            <input type="text" id="glossary-course-code" value="CSC101" required>
+          </label>
+          <label>
+            <span>Source Term</span>
+            <input type="text" id="glossary-source" value="quiz" required>
+          </label>
+          <label>
+            <span>Target Language</span>
+            <select id="glossary-language" required></select>
+          </label>
+          <label>
+            <span>Translated Term</span>
+            <input type="text" id="glossary-target" value="jaribio" required>
+          </label>
+          <button type="submit" class="primary-button">Add Glossary Term</button>
+        </form>
+        <pre class="response-box" id="glossary-response">No glossary request sent yet.</pre>
+      </section>
+
+      <section class="card card-wide">
+        <div class="card-head">
+          <p class="kicker">Step 3</p>
+          <h2>Translation Request</h2>
+        </div>
+        <form id="translation-form" class="translation-layout">
+          <div class="stack">
+            <label>
+              <span>Student ID</span>
+              <input type="text" id="translate-student-id" value="NLP001" required>
+            </label>
+            <label>
+              <span>Course Code</span>
+              <input type="text" id="translate-course-code" value="CSC101">
+            </label>
+            <label>
+              <span>Content Type</span>
+              <select id="translate-content-type">
+                <option value="notes">Notes</option>
+                <option value="quiz">Quiz</option>
+                <option value="chat">Chat</option>
+              </select>
+            </label>
+            <label>
+              <span>Manual Language Override</span>
+              <select id="translate-language-override">
+                <option value="">Auto from profile or nationality</option>
+              </select>
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="translate-bilingual" checked>
+              <span>Return bilingual output</span>
+            </label>
+          </div>
+
+          <div class="stack">
+            <label>
+              <span>Text to Translate</span>
+              <textarea id="translate-text" rows="10" required>The ERP quiz is available on the dashboard.</textarea>
+            </label>
+            <div class="action-row">
+              <button type="submit" class="primary-button">Translate</button>
+              <button type="button" class="ghost-button" id="clear-results">Clear Result</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="result-grid">
+          <article class="result-card">
+            <p class="result-label">Translated Text</p>
+            <div id="translated-text" class="result-content">Run a translation to see output.</div>
+          </article>
+          <article class="result-card">
+            <p class="result-label">Bilingual View</p>
+            <div id="bilingual-text" class="result-content muted">No bilingual output yet.</div>
+          </article>
+          <article class="result-card">
+            <p class="result-label">Translation Metadata</p>
+            <div id="translation-meta" class="result-content muted">No translation metadata yet.</div>
+          </article>
+        </div>
+
+        <details class="raw-response">
+          <summary>Raw API Response</summary>
+          <pre id="translation-response">No translation request sent yet.</pre>
+        </details>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js" defer></script>
+
+  <footer class="portal-footer">
+    <div class="footer-grid">
+      <div>
+        <strong>Islamic University in Uganda &mdash; Kampala Campus</strong>
+        <p>Kibuli Road, Kibuli, P.O.Box 7689, Kampala, Uganda</p>
+        <p>Tel: +256 414-341561 &nbsp;&bull;&nbsp; +256 414-230424</p>
+      </div>
+      <div>
+        <strong>NLP Translation Service</strong>
+        <p>9 languages &middot; Glossary-protected translation</p>
+        <p>Email: support@iuiu.ac.ug</p>
+      </div>
+      <div>
+        <strong>Academica ERP System</strong>
+        <p>In-house developed &middot; Version 3.0</p>
+        <p>Academic Year 2025/2026</p>
+      </div>
+    </div>
+    <p class="footer-copy">IUIU Kampala Campus &middot; &ldquo;Knowledge in the Service of Islam and Humanity&rdquo; &middot; Academica ERP &copy; 2025/2026</p>
+  </footer>
+</body>
+</html>

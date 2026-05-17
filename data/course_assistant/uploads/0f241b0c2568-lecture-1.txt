@@ -1,0 +1,1 @@
+Year 3 Semester II 2025/2026. CSC101 Enterprise Systems lecture one introduces enterprise resource planning. It explains how registration, finance, and teaching workflows stay connected in one system. Students should identify the major modules and the data each module shares.

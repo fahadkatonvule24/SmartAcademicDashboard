@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: iuiu-kampala-erp
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: TRANSLATION_PROVIDER
+        value: auto
+      - key: COURSE_ASSISTANT_PROVIDER
+        value: auto
+      - key: DEFAULT_SOURCE_LANGUAGE
+        value: en
+      - key: FALLBACK_LANGUAGE
+        value: en

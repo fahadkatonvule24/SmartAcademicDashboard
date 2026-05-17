@@ -1,0 +1,37 @@
+{
+  "S001": {
+    "student_id": "S001",
+    "study_hours_per_week": 12,
+    "generated_at": "2026-05-03T14:41:20+00:00",
+    "recommendations": [
+      {
+        "course_code": "BIS210",
+        "title": "Systems Analysis",
+        "priority": "Medium",
+        "recommended_hours": 3,
+        "reason": "Resources are available, but no quiz attempt has been recorded yet.",
+        "next_action": "Review Systems overview and its supporting lecturer notes.",
+        "average_quiz_score": null
+      },
+      {
+        "course_code": "BIT220",
+        "title": "Database Design",
+        "priority": "Medium",
+        "recommended_hours": 3,
+        "reason": "Resources are available, but no quiz attempt has been recorded yet.",
+        "next_action": "Review Database modelling and its supporting lecturer notes.",
+        "average_quiz_score": null
+      },
+      {
+        "course_code": "CSC101",
+        "title": "Enterprise Systems",
+        "priority": "Steady",
+        "recommended_hours": 2,
+        "reason": "Average quiz score is 80.0% across 1 attempt(s).",
+        "next_action": "Review Reports and decision support and its supporting lecturer notes.",
+        "average_quiz_score": 80.0
+      }
+    ],
+    "summary": "Prioritise courses with lower quiz performance and revisit indexed resources before the next study session."
+  }
+}

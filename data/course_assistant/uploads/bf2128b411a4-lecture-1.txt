@@ -1,0 +1,1 @@
+Year 2 Semester II 2025/2026. BIT220 Database Design lecture one introduces entities, attributes, and relationships. It uses university records such as students, courses, fees, and results as examples. Students should practice separating transactional data from reference data.

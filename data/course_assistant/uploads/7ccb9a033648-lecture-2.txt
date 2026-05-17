@@ -1,0 +1,1 @@
+Year 3 Semester II 2025/2026. BIT220 Database Design lecture two explains first, second, and third normal form. The examples use registration tables and lecturer resource indexes. Learners should identify duplicated fields and redesign them into cleaner structures.

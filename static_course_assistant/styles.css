@@ -1,0 +1,539 @@
+:root {
+  --bg: #eef4ec;
+  --ink: #102219;
+  --muted: #536257;
+  --panel: rgba(255, 255, 248, 0.94);
+  --panel-strong: #fffdf2;
+  --border: rgba(10, 73, 42, 0.14);
+  --iuiu-green: #064b2b;
+  --iuiu-green-2: #0b6b3b;
+  --iuiu-gold: #c8a13a;
+  --iuiu-gold-2: #e2c15f;
+  --accent: var(--iuiu-green);
+  --accent-soft: rgba(200, 161, 58, 0.16);
+  --accent-strong: #05351f;
+  --highlight: #9a781d;
+  --shadow: 0 20px 48px rgba(6, 75, 43, 0.14);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+  background:
+    linear-gradient(135deg, rgba(6, 75, 43, 0.08) 25%, transparent 25%) 0 0 / 26px 26px,
+    radial-gradient(circle at top left, rgba(200, 161, 58, 0.2), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(6, 75, 43, 0.18), transparent 32%),
+    linear-gradient(160deg, #fbfbf1 0%, var(--bg) 48%, #dfeade 100%);
+}
+
+.shell {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 3rem;
+}
+
+.iuiu-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.2rem;
+  color: #fffdf2;
+  background:
+    linear-gradient(90deg, rgba(200, 161, 58, 0.18), transparent 38%),
+    linear-gradient(135deg, var(--iuiu-green), #07371f);
+  border: 1px solid rgba(226, 193, 95, 0.45);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-crest {
+  display: grid;
+  place-items: center;
+  width: 4.25rem;
+  height: 4.25rem;
+  flex: 0 0 auto;
+  border: 2px solid var(--iuiu-gold-2);
+  border-radius: 50%;
+  background: #fffdf2;
+  color: var(--iuiu-green);
+  font-family: Georgia, "Palatino Linotype", serif;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.brand-name,
+.brand-lockup h2,
+.brand-lockup span,
+.brand-meta strong,
+.brand-meta span {
+  margin: 0;
+}
+
+.brand-name {
+  color: var(--iuiu-gold-2);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.brand-lockup h2 {
+  margin-top: 0.2rem;
+  color: #fffdf2;
+  font-size: clamp(1.35rem, 3vw, 2.1rem);
+}
+
+.brand-lockup span,
+.brand-meta span {
+  color: rgba(255, 253, 242, 0.78);
+}
+
+.brand-meta {
+  display: grid;
+  justify-items: end;
+  gap: 0.2rem;
+  text-align: right;
+}
+
+.brand-meta strong {
+  color: var(--iuiu-gold-2);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-copy,
+.hero-panel,
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+
+.hero-copy {
+  padding: 2.4rem;
+}
+
+.hero-panel {
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  align-content: center;
+  background:
+    linear-gradient(180deg, rgba(200, 161, 58, 0.14), rgba(255, 253, 242, 0.95)),
+    var(--panel);
+}
+
+.eyebrow,
+.kicker,
+.result-label {
+  margin: 0 0 0.35rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--accent-strong);
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-family: Georgia, "Palatino Linotype", serif;
+  line-height: 1.05;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  margin-bottom: 0.75rem;
+}
+
+h2 {
+  font-size: 1.55rem;
+}
+
+.lede {
+  max-width: 60ch;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 1.2rem;
+}
+
+.hero-actions,
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(21, 32, 43, 0.08);
+}
+
+.status-row:last-child {
+  border-bottom: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  padding: 1.4rem;
+}
+
+.card-wide {
+  grid-column: 1 / -1;
+}
+
+.card-head {
+  margin-bottom: 1rem;
+}
+
+.stack {
+  display: grid;
+  gap: 0.9rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+}
+
+label span {
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(21, 32, 43, 0.15);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--ink);
+  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+textarea {
+  min-height: 9rem;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: rgba(6, 75, 43, 0.48);
+  box-shadow: 0 0 0 4px rgba(200, 161, 58, 0.18);
+  transform: translateY(-1px);
+}
+
+.primary-button,
+.ghost-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1.2rem;
+  cursor: pointer;
+  transition: transform 150ms ease, background 150ms ease;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, var(--iuiu-green), var(--iuiu-green-2));
+  color: #fffdf2;
+  border: 1px solid rgba(226, 193, 95, 0.55);
+}
+
+.ghost-button {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  border: 1px solid rgba(200, 161, 58, 0.28);
+}
+
+.primary-button:hover,
+.ghost-button:hover {
+  transform: translateY(-1px);
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+}
+
+.toggle input {
+  width: auto;
+}
+
+.response-box,
+#chat-response,
+.result-content,
+.resource-item {
+  margin: 0;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: var(--panel-strong);
+  border: 1px solid rgba(6, 75, 43, 0.1);
+}
+
+.response-box,
+#chat-response {
+  overflow: auto;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.resource-list {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.resource-title {
+  margin: 0 0 0.35rem;
+  font-weight: 700;
+}
+
+.resource-meta,
+.resource-excerpt,
+.empty-state,
+.muted {
+  margin: 0;
+  color: var(--muted);
+}
+
+.resource-excerpt {
+  margin-top: 0.5rem;
+  line-height: 1.55;
+}
+
+.chat-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: 1.25rem;
+}
+
+.result-grid {
+  margin-top: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.result-card {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.result-content {
+  line-height: 1.7;
+}
+
+.raw-response {
+  margin-top: 1.1rem;
+}
+
+.raw-response summary {
+  cursor: pointer;
+  color: var(--highlight);
+  margin-bottom: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .hero,
+  .grid,
+  .chat-layout,
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shell {
+    width: min(100% - 1rem, 1180px);
+  }
+
+  .iuiu-banner,
+  .brand-lockup {
+    align-items: flex-start;
+  }
+
+  .iuiu-banner {
+    flex-direction: column;
+  }
+
+  .brand-meta {
+    justify-items: start;
+    text-align: left;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   IUIU COURSE ASSISTANT — EXTENDED STYLES
+   Kampala Campus — Academic Year 2025/2026
+═══════════════════════════════════════════ */
+
+/* ─── Portal nav link ─── */
+.portal-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.portal-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--iuiu-green);
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+.portal-nav-link:hover { text-decoration: underline; color: var(--accent-strong); }
+.portal-nav-meta {
+  font-size: 0.76rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ─── Card head accent bar ─── */
+.card-head {
+  border-left: 4px solid var(--iuiu-green);
+  padding-left: 0.85rem;
+}
+
+/* ─── Step kicker badge ─── */
+.kicker {
+  display: inline-block;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(6, 75, 43, 0.10);
+  color: var(--iuiu-green);
+  font-weight: 700;
+}
+
+/* ─── Hero h1 gradient ─── */
+.hero-copy h1 {
+  background: linear-gradient(135deg, var(--iuiu-green), var(--iuiu-green-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Result label ─── */
+.result-label {
+  font-weight: 700;
+  color: var(--iuiu-green);
+  border-bottom: 2px solid rgba(6, 75, 43, 0.14);
+  padding-bottom: 0.45rem;
+}
+
+/* ─── Status row value ─── */
+.status-row strong { font-family: Georgia, serif; color: var(--iuiu-green); }
+
+/* ─── Resource list item ─── */
+.resource-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--panel);
+  font-size: 0.88rem;
+}
+.resource-item + .resource-item { margin-top: 0.55rem; }
+.resource-item strong { font-family: Georgia, serif; }
+.resource-item span { color: var(--muted); font-size: 0.80rem; }
+
+/* ─── Empty state ─── */
+.empty-state {
+  padding: 1.1rem;
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+  border: 1px dashed var(--border);
+}
+
+/* ─── Portal footer ─── */
+.portal-footer {
+  margin-top: 2.5rem;
+  padding: 1.35rem 1.5rem;
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(90deg, rgba(200, 161, 58, 0.14), transparent 38%),
+    linear-gradient(135deg, var(--iuiu-green), #07371f);
+  border: 1px solid rgba(226, 193, 95, 0.38);
+  color: rgba(255, 253, 242, 0.70);
+  font-size: 0.79rem;
+  box-shadow: 0 16px 36px rgba(6, 75, 43, 0.14);
+}
+.footer-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.footer-grid p { margin: 0.2rem 0 0; line-height: 1.55; }
+.footer-grid strong {
+  display: block;
+  color: var(--iuiu-gold-2);
+  font-family: Georgia, "Palatino Linotype", serif;
+  font-size: 0.88rem;
+  margin-bottom: 0.28rem;
+}
+.footer-copy {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+  text-align: center;
+  color: rgba(255, 253, 242, 0.38);
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+}
+
+@media (max-width: 520px) {
+  .portal-footer { padding: 1rem; }
+  .footer-grid { flex-direction: column; gap: 0.85rem; }
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IUIU Kampala Campus - ERP System</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="institutional-ribbon" aria-label="IUIU Kampala Campus ERP identity">
+      <div class="ribbon-mark" aria-hidden="true">IUIU</div>
+      <div>
+        <p>Islamic University in Uganda &mdash; Kampala Campus</p>
+        <strong>Academica ERP System &middot; Academic Year 2025/2026</strong>
+      </div>
+      <div class="ribbon-right">
+        <span class="ribbon-badge">Kampala Campus Portal</span>
+        <span class="ribbon-motto">&ldquo;Knowledge in the Service of Islam and Humanity&rdquo;</span>
+      </div>
+    </div>
+
+    <section id="auth-stage" class="auth-stage">
+      <article class="phone-card auth-card">
+        <div class="auth-layout">
+          <section class="auth-hero">
+            <div class="auth-crest">
+              <div class="auth-crest-ring">IUIU</div>
+            </div>
+            <p class="auth-brand">Islamic University in Uganda</p>
+            <h1>Kampala Campus ERP</h1>
+            <span class="auth-campus-badge">Kampala Campus</span>
+            <p class="auth-motto">"Knowledge in the Service of Islam and Humanity"</p>
+            <p class="auth-copy">Access the integrated enterprise portal for academic operations, course management, student services, and AI-powered study support.</p>
+            <p class="auth-copy" style="font-size:0.78rem; opacity:0.60; margin-top:-0.5rem;">Kibuli Road, Kibuli, Kampala &nbsp;&bull;&nbsp; Est. 1988</p>
+          </section>
+
+          <section class="auth-form-panel">
+            <p class="auth-panel-kicker">IUIU Academica ERP</p>
+            <span class="auth-version-badge">Kampala Campus &middot; Version 3.0</span>
+            <h2>Sign In to Portal</h2>
+            <p class="auth-copy">Use your IUIU registration number or staff ID to access the Kampala Campus academic portal.</p>
+
+            <form id="login-form" class="stack">
+              <label>
+                <span>Registration / Staff Number</span>
+                <input type="text" id="login-username" autocomplete="username" placeholder="e.g. IUIU/KC/2024/001" required>
+                <small class="auth-input-hint">Students: registration number &nbsp;&bull;&nbsp; Staff: staff ID</small>
+              </label>
+              <label>
+                <span>Password</span>
+                <input type="password" id="login-password" autocomplete="current-password" placeholder="Your portal password" required>
+              </label>
+              <button type="submit" class="primary-button">Sign In to Academica ERP</button>
+              <button type="button" class="link-button" id="toggle-forgot-password">Forgot password?</button>
+            </form>
+
+            <div id="login-feedback" class="inline-feedback hidden"></div>
+
+            <section id="forgot-panel" class="forgot-panel hidden">
+              <h2>Reset password</h2>
+              <p class="auth-copy">Enter your username to prepare a reset instruction message.</p>
+              <form id="forgot-form" class="stack">
+                <label>
+                  <span>Username</span>
+                  <input type="text" id="forgot-username" autocomplete="username">
+                </label>
+                <div class="row-actions">
+                  <button type="submit" class="primary-button">Send reset</button>
+                  <button type="button" class="ghost-button" id="cancel-forgot-password">Cancel</button>
+                </div>
+              </form>
+              <div id="forgot-feedback" class="inline-feedback hidden"></div>
+            </section>
+
+            <p class="auth-footer-note">IUIU Kampala Campus &middot; Kibuli, Kampala &middot; support@iuiu.ac.ug</p>
+          </section>
+        </div>
+      </article>
+    </section>
+
+    <section id="app-stage" class="app-stage hidden">
+      <div class="phone-card phone-shell">
+        <div id="app-message" class="app-message hidden"></div>
+        <header id="app-header"></header>
+        <main id="app-main"></main>
+        <footer class="portal-footer">
+          <div class="footer-grid">
+            <div>
+              <strong>Islamic University in Uganda &mdash; Kampala Campus</strong>
+              <p>Kibuli Road, Kibuli, P.O.Box 7689, Kampala, Uganda</p>
+              <p>Tel: +256 414-341561 &nbsp;&bull;&nbsp; +256 414-230424</p>
+            </div>
+            <div>
+              <strong>Student &amp; Staff Support</strong>
+              <p>Email: <a href="mailto:support@iuiu.ac.ug">support@iuiu.ac.ug</a></p>
+              <p>Website: <a href="https://www.iuiu.ac.ug" target="_blank" rel="noopener">www.iuiu.ac.ug</a></p>
+            </div>
+            <div>
+              <strong>Academica ERP System</strong>
+              <p>Academic Year 2025/2026</p>
+              <p>In-house developed &middot; Version 3.0</p>
+            </div>
+          </div>
+          <p class="footer-copy">IUIU Kampala Campus &middot; &ldquo;Knowledge in the Service of Islam and Humanity&rdquo; &middot; Academica ERP &copy; 2025/2026</p>
+        </footer>
+      </div>
+
+      <button id="chat-fab" class="chat-fab hidden" type="button">Course&nbsp;Help</button>
+      <aside id="chat-drawer" class="chat-drawer hidden"></aside>
+    </section>
+  </div>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

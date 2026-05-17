@@ -1,0 +1,28 @@
+{
+  "CSC101": [
+    {
+      "source": "ERP",
+      "targets": {
+        "sw": "ERP",
+        "fr": "ERP"
+      },
+      "notes": "None"
+    },
+    {
+      "source": "quiz",
+      "targets": {
+        "sw": "jaribio",
+        "fr": "quiz"
+      },
+      "notes": "None"
+    },
+    {
+      "source": "dashboard",
+      "targets": {
+        "sw": "dashibodi",
+        "fr": "tableau de bord"
+      },
+      "notes": null
+    }
+  ]
+}

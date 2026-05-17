@@ -1,0 +1,1 @@
+Year 3 Semester II 2025/2026. BIS210 Systems Analysis lecture two captures requirements through interviews, observations, and use cases. The lecture note models login, resource access, translation support, and lecturer feedback. Learners should turn user goals into clear functional requirements.

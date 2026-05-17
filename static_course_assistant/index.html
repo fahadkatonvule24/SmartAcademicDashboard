@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IUIU Kampala Campus | Course Assistant</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <div class="portal-nav-row">
+      <a href="/dashboard" class="portal-nav-link">&#8962; Back to Academica ERP Dashboard</a>
+      <span class="portal-nav-meta">IUIU Kampala Campus &middot; Academic Year 2025/2026</span>
+    </div>
+
+    <section class="iuiu-banner" aria-label="IUIU Kampala Campus branding">
+      <div class="brand-lockup">
+        <div class="brand-crest" aria-hidden="true">IUIU</div>
+        <div>
+          <p class="brand-name">Islamic University in Uganda &mdash; Kampala Campus</p>
+          <h2>Academica ERP &middot; AI Course Assistant</h2>
+          <span>Grounded Academic Resource Retrieval &amp; Multilingual Course Support</span>
+        </div>
+      </div>
+      <div class="brand-meta">
+        <strong>Faculty Academic Services</strong>
+        <span>Kampala Campus &middot; AI-Powered Support</span>
+      </div>
+    </section>
+
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">IUIU Kampala Campus ERP</p>
+        <h1>Course Assistant Portal</h1>
+        <p class="lede">
+          Upload course notes into the campus resource library, review course answers, and prepare
+          translations for student support.
+        </p>
+        <div class="hero-actions">
+          <button class="ghost-button" id="load-demo">Load Sample Notes</button>
+          <button class="ghost-button" id="refresh-library">Refresh Library</button>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <div class="status-row">
+          <span>API Status</span>
+          <strong id="health-status">Checking...</strong>
+        </div>
+        <div class="status-row">
+          <span>Provider</span>
+          <strong id="provider-status">-</strong>
+        </div>
+        <div class="status-row">
+          <span>Resources</span>
+          <strong id="resource-count">-</strong>
+        </div>
+        <div class="status-row">
+          <span>Indexed Chunks</span>
+          <strong id="chunk-count">-</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="card-head">
+          <p class="kicker">Step 1</p>
+          <h2>Resource Ingestion</h2>
+        </div>
+        <form id="resource-form" class="stack">
+          <label>
+            <span>Lecturer ID</span>
+            <input type="text" id="resource-lecturer-id" value="L001" required>
+          </label>
+          <label>
+            <span>Course Code</span>
+            <input type="text" id="resource-course-code" value="CSC101" required>
+          </label>
+          <label>
+            <span>Title</span>
+            <input type="text" id="resource-title" value="Week 3 ERP Notes" required>
+          </label>
+          <label>
+            <span>Topic</span>
+            <input type="text" id="resource-topic" value="ERP workflow">
+          </label>
+          <label>
+            <span>Week</span>
+            <input type="text" id="resource-week" value="Week 3">
+          </label>
+          <label>
+            <span>Semester</span>
+            <input type="text" id="resource-semester" value="Semester 2">
+          </label>
+          <label>
+            <span>Academic Year</span>
+            <input type="text" id="resource-year" value="2025/2026">
+          </label>
+          <label>
+            <span>Paste Notes</span>
+            <textarea id="resource-text" rows="9">ERP integrates registration, finance, and academic workflows in one dashboard. Students can view course resources in the virtual room. Lecturers should tag notes by topic so the course assistant can retrieve the right explanation. Quiz readiness improves when students review indexed notes before attempting questions.</textarea>
+          </label>
+          <label>
+            <span>Or Upload File (.txt, .md, .docx)</span>
+            <input type="file" id="resource-file" accept=".txt,.md,.csv,.json,.html,.docx">
+          </label>
+          <button type="submit" class="primary-button">Index Resource</button>
+        </form>
+        <pre class="response-box" id="resource-response">No resource indexed yet.</pre>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <p class="kicker">Step 2</p>
+          <h2>Resource Library</h2>
+        </div>
+        <div class="action-row">
+          <input type="text" id="resource-filter" placeholder="Filter by course code">
+          <button type="button" class="ghost-button" id="apply-filter">Filter</button>
+        </div>
+        <div class="resource-list" id="resource-list">
+          <p class="empty-state">No resources loaded yet.</p>
+        </div>
+      </section>
+
+      <section class="card card-wide">
+        <div class="card-head">
+          <p class="kicker">Step 3</p>
+          <h2>Grounded Chatbot</h2>
+        </div>
+        <form id="chat-form" class="chat-layout">
+          <div class="stack">
+            <label>
+              <span>Student ID</span>
+              <input type="text" id="chat-student-id" value="S001">
+            </label>
+            <label>
+              <span>Course Code</span>
+              <input type="text" id="chat-course-code" value="CSC101" required>
+            </label>
+            <label>
+              <span>Topic Filter</span>
+              <input type="text" id="chat-topic" value="ERP workflow">
+            </label>
+            <label>
+              <span>Target Language Override</span>
+              <input type="text" id="chat-target-language" placeholder="Optional, e.g. sw">
+            </label>
+            <label>
+              <span>Nationality Override</span>
+              <input type="text" id="chat-nationality" placeholder="Optional, e.g. Kenya">
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="chat-translate" checked>
+              <span>Translate answer through the NLP module</span>
+            </label>
+          </div>
+
+          <div class="stack">
+            <label>
+              <span>Question</span>
+              <textarea id="chat-question" rows="8" required>How do indexed notes help students prepare for quizzes in the ERP workflow?</textarea>
+            </label>
+            <div class="action-row">
+              <button type="submit" class="primary-button">Ask Course Assistant</button>
+              <button type="button" class="ghost-button" id="clear-chat">Clear Result</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="result-grid">
+          <article class="result-card">
+            <p class="result-label">Answer</p>
+            <div id="chat-answer" class="result-content">Ask a question to see the course answer.</div>
+          </article>
+          <article class="result-card">
+            <p class="result-label">Citations</p>
+            <div id="chat-citations" class="result-content muted">No citations yet.</div>
+          </article>
+          <article class="result-card">
+            <p class="result-label">Translation</p>
+            <div id="chat-translation" class="result-content muted">No translated answer yet.</div>
+          </article>
+        </div>
+
+        <details class="raw-response">
+          <summary>Raw API Response</summary>
+          <pre id="chat-response">No chat request sent yet.</pre>
+        </details>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js" defer></script>
+
+  <footer class="portal-footer">
+    <div class="footer-grid">
+      <div>
+        <strong>Islamic University in Uganda &mdash; Kampala Campus</strong>
+        <p>Kibuli Road, Kibuli, P.O.Box 7689, Kampala, Uganda</p>
+        <p>Tel: +256 414-341561 &nbsp;&bull;&nbsp; +256 414-230424</p>
+      </div>
+      <div>
+        <strong>AI Course Assistant</strong>
+        <p>Grounded retrieval from indexed lecture notes</p>
+        <p>Email: support@iuiu.ac.ug</p>
+      </div>
+      <div>
+        <strong>Academica ERP System</strong>
+        <p>In-house developed &middot; Version 3.0</p>
+        <p>Academic Year 2025/2026</p>
+      </div>
+    </div>
+    <p class="footer-copy">IUIU Kampala Campus &middot; &ldquo;Knowledge in the Service of Islam and Humanity&rdquo; &middot; Academica ERP &copy; 2025/2026</p>
+  </footer>
+</body>
+</html>

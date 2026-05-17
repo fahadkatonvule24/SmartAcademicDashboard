@@ -1,0 +1,46 @@
+{
+  "S001": {
+    "student_id": "S001",
+    "available_hours_per_week": 12,
+    "preferred_times": [
+      "18:30 - 20:30",
+      "06:30 - 08:30",
+      "15:00 - 17:00"
+    ],
+    "generated_at": "2026-05-06T11:11:42+00:00",
+    "entries": [
+      {
+        "day": "Monday",
+        "time": "18:30 - 20:30",
+        "course_code": "CSC101",
+        "title": "Enterprise Systems",
+        "duration_hours": 3.0,
+        "focus": "Review Reports and decision support and its supporting lecturer notes."
+      },
+      {
+        "day": "Tuesday",
+        "time": "06:30 - 08:30",
+        "course_code": "BIT220",
+        "title": "Database Design",
+        "duration_hours": 3.0,
+        "focus": "Review Database modelling and its supporting lecturer notes."
+      },
+      {
+        "day": "Wednesday",
+        "time": "15:00 - 17:00",
+        "course_code": "BIS210",
+        "title": "Systems Analysis",
+        "duration_hours": 3.0,
+        "focus": "Review Systems overview and its supporting lecturer notes."
+      },
+      {
+        "day": "Thursday",
+        "time": "18:30 - 20:30",
+        "course_code": "CSC101",
+        "title": "Enterprise Systems",
+        "duration_hours": 3.0,
+        "focus": "Review Reports and decision support and its supporting lecturer notes."
+      }
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+Year 3 Semester II 2025/2026. CSC101 Enterprise Systems lecture two focuses on workflow mapping. The note compares student registration, lecturer uploads, assessment records, and announcements. Learners should follow each workflow from data entry to reporting.
