@@ -27,6 +27,9 @@ const STUDENT_MODULE_ALIASES = {
   study_planner: "study_planner",
   quiz_centre: "quiz_centre",
   my_registration: "my_registration",
+  elearning_dashboard: "e_learning_centre",
+  elearning_profile: "profile",
+  my_examinations: "quiz_centre",
   announcements: "announcements",
   library: "library",
   feedback_to_lecturer: "feedback_to_lecturer",
@@ -211,6 +214,196 @@ function currentChatContext() {
   };
 }
 
+function isElearningModule(module = state.activeModule) {
+  if (state.session?.role !== "student") {
+    return false;
+  }
+  return [
+    "elearning_dashboard",
+    "e_learning_centre",
+    "quiz_centre",
+    "my_examinations",
+    "study_planner",
+    "elearning_profile",
+  ].includes(module);
+}
+
+function activeShell() {
+  return isElearningModule() ? "elearning" : "academica";
+}
+
+function displayRegistrationNumber() {
+  return (
+    state.workspace?.registration_number ||
+    state.session?.registration_number ||
+    state.session?.student_id ||
+    state.session?.lecturer_id ||
+    ""
+  );
+}
+
+function displayUserName() {
+  return state.session?.display_name || state.session?.username || "User";
+}
+
+function displayUserLine() {
+  if (state.session?.role === "student") {
+    return `${displayUserName()} :: ${displayRegistrationNumber()}`;
+  }
+  return `${displayUserName()} :: ${state.session?.lecturer_id || "STAFF"}`;
+}
+
+function renderAcademicaLogo() {
+  return `
+    <div class="academica-logo" aria-label="Academica ERP">
+      <span class="academica-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <strong>ACADEMICA</strong>
+      <em>ERP</em>
+    </div>
+  `;
+}
+
+function renderStudentAvatar() {
+  const initials = displayUserName()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "IU";
+  return `<div class="erp-avatar" aria-label="Student avatar">${escapeHtml(initials)}</div>`;
+}
+
+function renderTopSearch() {
+  return `
+    <form class="portal-search" role="search">
+      <input type="search" placeholder="Search" aria-label="Search">
+      <button type="button" aria-label="Search">&#128269;</button>
+    </form>
+  `;
+}
+
+function erpNavButton({ module, action, label, icon = "", activeWhen = null, child = false }) {
+  const isActive = activeWhen ? activeWhen() : state.activeModule === module || (!state.activeModule && module === "profile");
+  const attrs = action
+    ? `data-action="${escapeHtml(action)}"`
+    : `data-module="${escapeHtml(module)}"`;
+  return `
+    <button type="button" class="erp-menu-item${child ? " erp-menu-item--child" : ""}${isActive ? " is-active" : ""}" ${attrs}>
+      <span class="erp-menu-icon">${icon}</span>
+      <span>${escapeHtml(label)}</span>
+      ${child ? "" : `<span class="erp-menu-caret">&#8250;</span>`}
+    </button>
+  `;
+}
+
+function renderAcademicaSidebar() {
+  if (state.session?.role === "lecturer") {
+    const items = [
+      { module: "my_courses", label: "My Courses", icon: "&#9638;" },
+      { module: "todays_classes", label: "Today's Classes", icon: "&#9636;" },
+      { module: "upload_resources", label: "Resources Centre", icon: "&#9635;" },
+      { module: "quiz_generator", label: "Quiz Generator", icon: "&#10003;" },
+      { module: "quiz_review", label: "Quiz Review", icon: "&#10003;" },
+      { module: "student_feedback", label: "Student Feedback", icon: "&#9993;" },
+      { module: "announcements", label: "Notifications", icon: "&#9888;" },
+    ];
+    return `
+      <aside class="erp-sidebar">
+        <div class="erp-logo-card">${renderAcademicaLogo()}</div>
+        <nav class="erp-menu" aria-label="Lecturer menu">
+          ${items.map((item) => erpNavButton(item)).join("")}
+        </nav>
+      </aside>
+    `;
+  }
+
+  return `
+    <aside class="erp-sidebar">
+      <div class="erp-logo-card">${renderAcademicaLogo()}</div>
+      <nav class="erp-menu" aria-label="Student menu">
+        ${erpNavButton({ module: "announcements", label: "Notifications", icon: "&#9888;" })}
+        ${erpNavButton({ module: "profile", label: "My Profile", icon: "&#9787;" })}
+        ${erpNavButton({ module: "elearning_dashboard", label: "E-learning Centre", icon: "&#9673;", activeWhen: () => isElearningModule() })}
+        <div class="erp-menu-group${state.activeModule === "my_registration" ? " is-open" : ""}">
+          ${erpNavButton({ module: "my_registration", label: "Learning & Registration", icon: "&#9632;" })}
+          ${state.activeModule === "my_registration" ? `
+            ${erpNavButton({ module: "my_registration", label: "Courses & Registration", icon: "&#9636;", child: true })}
+            ${erpNavButton({ module: "my_registration", label: "Retake Registration", icon: "&#8644;", child: true })}
+            ${erpNavButton({ module: "feedback_to_lecturer", label: "Lecturer Evaluation", icon: "&#9745;", child: true })}
+            ${erpNavButton({ module: "my_timetable", label: "Timetable Info", icon: "&#9635;", child: true })}
+          ` : ""}
+        </div>
+        ${erpNavButton({ module: "fees_info", label: "Fees Information", icon: "&#9637;" })}
+        <div class="erp-menu-group${state.activeModule === "results" ? " is-open" : ""}">
+          ${erpNavButton({ module: "results", label: "Results Centre", icon: "&#10038;" })}
+          ${state.activeModule === "results" ? `
+            ${erpNavButton({ module: "results", label: "Exam Results", icon: "&#9635;", child: true })}
+            ${erpNavButton({ module: "results", label: "Coursework Results", icon: "&#9635;", child: true })}
+          ` : ""}
+        </div>
+        ${erpNavButton({ module: "library", label: "Library Centre", icon: "&#9632;" })}
+      </nav>
+    </aside>
+  `;
+}
+
+function renderElearningSidebar() {
+  const items = [
+    { action: "go-home", label: "ERP Portal Home", icon: "&#8962;", activeWhen: () => false },
+    { module: "elearning_dashboard", label: "My Dashboard", icon: "&#9634;" },
+    { module: "e_learning_centre", label: "My Digital Classes", icon: "&#9787;" },
+    { module: "my_examinations", label: "My Examinations", icon: "&#9635;", activeWhen: () => state.activeModule === "quiz_centre" || state.activeModule === "my_examinations" },
+    { module: "elearning_profile", label: "My Profile", icon: "&#9790;" },
+    { module: "study_planner", label: "User Guide", icon: "&#9635;" },
+  ];
+  return `
+    <aside class="elearn-sidebar">
+      <div class="elearn-brand">
+        <span class="elearn-seal">IU</span>
+        <strong>E-LEARNING</strong>
+      </div>
+      <p class="elearn-menu-label">MAIN MENU</p>
+      <nav class="elearn-menu" aria-label="E-learning menu">
+        ${items.map((item) => erpNavButton(item).replaceAll("erp-menu", "elearn-menu")).join("")}
+      </nav>
+    </aside>
+  `;
+}
+
+function renderPortalChrome() {
+  if (activeShell() === "elearning") {
+    return `
+      <div class="portal-chrome portal-chrome--elearning">
+        <header class="elearn-topbar">
+          <button type="button" class="icon-button" aria-label="Open menu">&#9776;</button>
+          <button type="button" class="icon-button" aria-label="Fullscreen">&#9974;</button>
+          <div class="elearn-topbar-actions">
+            <span class="chat-pill">0 Chats</span>
+            <button type="button" class="icon-button" aria-label="Messages">&#9993;</button>
+            <button type="button" class="icon-button" aria-label="Notifications">&#9888;</button>
+            ${renderStudentAvatar()}
+          </div>
+        </header>
+        ${renderElearningSidebar()}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="portal-chrome portal-chrome--academica">
+      <header class="erp-topbar">
+        <button type="button" class="erp-hamburger" aria-label="Open menu">&#9776;</button>
+        <div class="erp-topbar-spacer"></div>
+        ${renderTopSearch()}
+        <button type="button" class="erp-top-icon" aria-label="Notifications">&#9888;</button>
+        <button type="button" class="erp-top-icon" aria-label="User">&#9787;</button>
+      </header>
+      ${renderAcademicaSidebar()}
+    </div>
+  `;
+}
+
 function detailRows(rows) {
   return rows
     .map(
@@ -290,61 +483,99 @@ function headerChips() {
 }
 
 function renderHeader() {
-  const user = state.session || {};
-  const roleTitle = user.role === "lecturer" ? "Lecturer Workspace" : "Student Workspace";
-  const roleSubtitle =
-    user.role === "lecturer"
-      ? "Rooms, sessions, uploads, quizzes, and student signals in one place."
-      : "Courses, notes, quizzes, planning, and lecturer support in one place.";
-  const studentMeta = [user.display_name, user.program, user.year_of_study]
-    .filter(Boolean)
-    .map((value) => `<span>${escapeHtml(value)}</span>`)
-    .join("");
-  const lecturerMeta = [user.display_name, currentCourse()?.title || currentCourseCode() || user.title || roleTitle]
-    .filter(Boolean)
-    .map((value) => `<span>${escapeHtml(value)}</span>`)
-    .join("");
+  return renderPortalChrome();
+}
 
+function renderErpStudentBar(text = displayUserLine()) {
   return `
-    <div class="portal-topbar">
-      <div class="portal-brand">
-        <div class="portal-mark">IUIU</div>
-        <div>
-          <p class="portal-eyebrow">Islamic University in Uganda &mdash; Kampala Campus</p>
-          <strong class="portal-title">Academica ERP &middot; 2025/2026</strong>
-        </div>
-      </div>
-      <div class="portal-user-chip">
-        <span class="portal-user-role">${escapeHtml(user.role === "lecturer" ? "Lecturer" : "Student")}</span>
-        <span class="portal-user-name">${escapeHtml(user.display_name || user.username || "")}</span>
-      </div>
-      <div class="portal-actions">
-        <button type="button" class="nav-pill" data-action="go-home">&#8962; Home</button>
-        <button type="button" class="nav-pill nav-pill--secondary" data-action="logout">Sign Out</button>
-      </div>
+    <div class="erp-user-strip">
+      <strong>${escapeHtml(text)}</strong>
+      <button type="button" class="erp-logout" data-action="logout">Sign Out</button>
     </div>
-    <div class="workspace-strip">
-      <div class="workspace-intro">
-        <div>
-          <p class="hero-label">${escapeHtml(user.role === "lecturer" ? "Teaching Operations" : "Learning Workspace")}</p>
-          <h2 class="workspace-title">${escapeHtml(roleTitle)}</h2>
+  `;
+}
+
+function renderLegacyPanel({ title, icon = "&#9636;", body, extraClass = "" }) {
+  return `
+    <section class="legacy-panel ${extraClass}">
+      <div class="legacy-panel-inner">
+        <div class="legacy-panel-title">
+          <span class="legacy-title-icon">${icon}</span>
+          <strong>${escapeHtml(title)}</strong>
         </div>
-        <p class="workspace-note">${escapeHtml(roleSubtitle)}</p>
-        <div class="hero-chip-row">
-          ${headerChips()
-            .map((chip) => `<span class="hero-chip">${escapeHtml(chip)}</span>`)
-            .join("")}
-        </div>
+        ${body}
       </div>
-      <article class="hero-meta-card hero-meta-card--compact">
-        <p class="hero-meta-heading">Signed in</p>
-        <div class="hero-meta-list">${user.role === "lecturer" ? lecturerMeta : studentMeta}</div>
-      </article>
-      <div class="hero-stat-grid hero-stat-grid--compact">
-        ${workspaceStats().map(renderWorkspaceStat).join("")}
-      </div>
+    </section>
+  `;
+}
+
+function renderLegacyTable({ columns, rows, empty = "No data available in table", highlightFirst = false }) {
+  const bodyRows = rows.length
+    ? rows
+        .map(
+          (row, index) => `
+            <tr class="${highlightFirst && index === 0 ? "is-highlighted" : ""}">
+              ${row.map((cell) => `<td>${cell == null ? "" : escapeHtml(cell)}</td>`).join("")}
+            </tr>
+          `,
+        )
+        .join("")
+    : `<tr><td colspan="${columns.length}" class="legacy-empty-cell">${escapeHtml(empty)}</td></tr>`;
+  return `
+    <table class="legacy-table">
+      <thead>
+        <tr>${columns.map((column) => `<th>${escapeHtml(column)}</th>`).join("")}</tr>
+      </thead>
+      <tbody>${bodyRows}</tbody>
+    </table>
+  `;
+}
+
+function renderLegacyTableRaw({ columns, rowsHtml, empty = "No data available in table" }) {
+  return `
+    <table class="legacy-table">
+      <thead>
+        <tr>${columns.map((column) => `<th>${escapeHtml(column)}</th>`).join("")}</tr>
+      </thead>
+      <tbody>${rowsHtml || `<tr><td colspan="${columns.length}" class="legacy-empty-cell">${escapeHtml(empty)}</td></tr>`}</tbody>
+    </table>
+  `;
+}
+
+function renderDataToolbar({ showEntries = true, search = true } = {}) {
+  return `
+    <div class="legacy-data-toolbar">
+      ${showEntries ? `
+        <label class="legacy-show-entries">
+          <span>Show</span>
+          <select><option>10</option><option>25</option><option>50</option></select>
+          <span>entries</span>
+        </label>
+      ` : "<span></span>"}
+      ${search ? `
+        <label class="legacy-search-inline">
+          <span>Search:</span>
+          <input type="search">
+        </label>
+      ` : ""}
     </div>
-    ${renderModuleNav()}
+  `;
+}
+
+function renderErpSummaryCards(items) {
+  return `
+    <div class="erp-summary-grid">
+      ${items
+        .map(
+          (item) => `
+            <article class="erp-summary-card">
+              <span>${escapeHtml(item.label)}</span>
+              <strong>${escapeHtml(item.value)}</strong>
+            </article>
+          `,
+        )
+        .join("")}
+    </div>
   `;
 }
 
@@ -395,7 +626,51 @@ function renderHome() {
   `;
 }
 
+function renderHome() {
+  if (state.session?.role === "student") {
+    return renderStudentProfileErp(state.workspace || {});
+  }
+
+  const workspace = state.workspace || {};
+  return `
+    <section class="erp-page">
+      ${renderErpStudentBar(displayUserLine())}
+      ${renderLegacyPanel({
+        title: "LECTURER DASHBOARD",
+        icon: "&#9636;",
+        body: `
+          ${renderErpSummaryCards(workspaceStats())}
+          <div class="legacy-table-wrap">
+            ${renderLegacyTable({
+              columns: ["#", "Course", "Room", "Schedule", "Enrolled", "Resources"],
+              rows: (workspace.virtual_rooms || []).map((room, index) => [
+                index + 1,
+                `${room.course_code} - ${room.title}`,
+                room.room || "-",
+                [room.day, room.time].filter(Boolean).join(" ") || "-",
+                room.enrolled || "-",
+                room.resource_count || 0,
+              ]),
+            })}
+          </div>
+        `,
+      })}
+    </section>
+  `;
+}
+
 function moduleTitle(module) {
+  const explicitTitles = {
+    elearning_dashboard: "My Dashboard",
+    elearning_profile: "My Profile",
+    my_examinations: "My Examinations",
+    my_registration: "Courses & E-Content Centre",
+    fees_info: "Fees Information",
+    results: "Exam Results",
+  };
+  if (explicitTitles[module]) {
+    return explicitTitles[module];
+  }
   const allTiles = [
     ...(state.workspace?.quick_info_tiles || []),
     ...(state.workspace?.service_tiles || []),
@@ -511,16 +786,21 @@ function renderModule() {
       ? renderLecturerModule(module)
       : renderStudentModule(module);
 
+  if (state.session?.role === "student" && state.activeModule === "profile") {
+    return body;
+  }
+
+  if (activeShell() === "elearning") {
+    return `
+      <section class="elearn-page">
+        ${body}
+      </section>
+    `;
+  }
+
   return `
-    <section class="module-card">
-      <div class="module-head">
-        <div>
-          <p class="section-kicker">Academic Portal</p>
-          <h2 class="section-title">${escapeHtml(moduleTitle(state.activeModule))}</h2>
-          <p class="module-copy">${escapeHtml(moduleDescription(state.activeModule))}</p>
-        </div>
-        <button type="button" class="back-button" data-action="go-home">&#8592; Dashboard</button>
-      </div>
+    <section class="erp-page">
+      ${renderErpStudentBar(displayUserLine())}
       ${body}
     </section>
   `;
@@ -713,11 +993,11 @@ function renderStudentLectureTabs(sessions, activeSessionId = "") {
 function renderStudentLectureDirectory(workspace) {
   const sessions = workspace.lecture_sessions || [];
   return `
-    <section class="module-section">
-      <div class="section-intro">
+    <section class="elearn-card elearn-lecture-card">
+      <div class="elearn-section-head">
         <div>
           <p class="section-kicker">Lectures</p>
-          <h3>Select one lecture</h3>
+          <h2>Select one lecture</h2>
         </div>
         <div class="helper">
           ${escapeHtml(
@@ -735,11 +1015,11 @@ function renderStudentLectureDirectory(workspace) {
 function renderStudentLectureSessionDetail(workspace, session) {
   const sessions = workspace.lecture_sessions || [];
   return `
-    <section class="module-section">
-      <div class="section-intro">
+    <section class="elearn-card elearn-lecture-detail">
+      <div class="elearn-section-head">
         <div>
           <p class="section-kicker">Lecture Resources</p>
-          <h3>${escapeHtml(session.title || "Lecture")}</h3>
+          <h2>${escapeHtml(session.title || "Lecture")}</h2>
         </div>
         <div class="helper">${escapeHtml(
           [session.topic || null, session.date_or_week || null, session.status || "Delivered"]
@@ -765,11 +1045,11 @@ function renderStudentLectureSessionDetail(workspace, session) {
             )}.</div>`
           : ""
       }
-      <section class="module-section">
-        <div class="section-intro">
+      <section class="elearn-resource-block">
+        <div class="elearn-section-head">
           <div>
             <p class="section-kicker">Resources</p>
-            <h3>${escapeHtml(`${session.attachment_count || 0} file(s)`)}</h3>
+            <h2>${escapeHtml(`${session.attachment_count || 0} file(s)`)}</h2>
           </div>
         </div>
         <div class="attachment-list">
@@ -826,11 +1106,12 @@ function renderStudentCourseResourceView(workspace) {
   const selectedRoom = currentRoom();
   const activeSession = currentStudentLectureSession();
   return `
-    <section class="module-section">
-      <div class="section-intro">
+    <section class="elearn-course-stack">
+      <section class="elearn-card elearn-course-card">
+      <div class="elearn-section-head">
         <div>
           <p class="section-kicker">Course Unit</p>
-          <h3>${escapeHtml(selectedCourse?.title || "Course materials")}</h3>
+          <h2>${escapeHtml(selectedCourse?.title || "Course materials")}</h2>
         </div>
         <div class="helper">${escapeHtml(
           [selectedCourse?.course_code, selectedRoom?.semester, selectedRoom?.lecturer]
@@ -838,7 +1119,7 @@ function renderStudentCourseResourceView(workspace) {
             .join(" | ") || "Choose a course unit to view its lectures.",
         )}</div>
       </div>
-      <div class="resource-toolbar">
+      <div class="resource-toolbar elearn-resource-toolbar">
         ${renderStudentCourseSelector(workspace)}
         <div class="row-actions">
           <button type="button" class="ghost-button" data-action="back-to-course-units">
@@ -853,6 +1134,7 @@ function renderStudentCourseResourceView(workspace) {
             )}.</div>`
           : ""
       }
+      </section>
       ${activeSession ? renderStudentLectureSessionDetail(workspace, activeSession) : renderStudentLectureDirectory(workspace)}
     </section>
   `;
@@ -1268,6 +1550,401 @@ function renderLecturerSessionDetail(workspace, session) {
   `;
 }
 
+function renderStudentProfileErp(workspace) {
+  const profile = workspace.erp_profile || {};
+  const fieldRows = [
+    ["Registration No:", profile.registration_number || displayRegistrationNumber()],
+    ["Name:", profile.name || displayUserName()],
+    ["Gender:", profile.gender || "-"],
+    ["Nationality:", profile.nationality || state.session?.nationality || "-"],
+    ["Birth Date:", profile.birth_date || "-"],
+    ["Session:", profile.session || "-"],
+    ["Marital Status:", profile.marital_status || "-"],
+    ["Arabic Name:", profile.arabic_name || ""],
+    ["Religion:", profile.religion || "-"],
+    ["Entry Method:", profile.entry_method || "-"],
+    ["Entry Year:", profile.entry_year || "-"],
+    ["Phone:", profile.phone || "-"],
+    ["Email:", profile.email || state.session?.email || "-"],
+    ["Hall:", profile.hall || "-"],
+    ["Home District:", profile.home_district || "-"],
+    ["Intake:", profile.intake || "-"],
+  ];
+  const half = Math.ceil(fieldRows.length / 2);
+  const renderFields = (rows) => rows
+    .map(
+      ([label, value]) => `
+        <div class="erp-profile-row">
+          <strong>${escapeHtml(label)}</strong>
+          <span>${escapeHtml(value)}</span>
+        </div>
+      `,
+    )
+    .join("");
+  const clearanceRows = (workspace.clearance_history || []).map((entry, index) => [
+    index === 0 ? "*" : "o",
+    entry.academic_year,
+    entry.year,
+    entry.semester,
+    entry.reg_status,
+    entry.retakes,
+    entry.status,
+    entry.cleared_by,
+    entry.date_cleared,
+  ]);
+
+  return `
+    <section class="erp-page">
+      ${renderErpStudentBar(displayUserLine())}
+      ${renderLegacyPanel({
+        title: "MY PROFILE",
+        icon: "&#9636;",
+        body: `
+          <div class="legacy-tab">Student Profile</div>
+          <div class="erp-profile-card">
+            <div class="erp-photo-frame">${renderStudentAvatar()}</div>
+            <div class="erp-profile-columns">
+              <div>${renderFields(fieldRows.slice(0, half))}</div>
+              <div>${renderFields(fieldRows.slice(half))}</div>
+            </div>
+          </div>
+          <div class="legacy-section-title">Clearance & Examination Card History</div>
+          <div class="legacy-table-wrap">
+            ${renderLegacyTable({
+              columns: ["#", "Academic Yr", "Year", "Semester", "Reg Status", "Retakes", "Clearance | Exam Card Status", "Cleared By", "Date Cleared"],
+              rows: clearanceRows,
+              highlightFirst: true,
+            })}
+          </div>
+        `,
+      })}
+    </section>
+  `;
+}
+
+function renderRegistrationErp(workspace) {
+  const units = workspace.registered_course_units?.length ? workspace.registered_course_units : workspace.courses || [];
+  return renderLegacyPanel({
+    title: "COURSES & E-CONTENT CENTRE",
+    icon: "&#9636;",
+    body: `
+      <div class="erp-filter-grid">
+        <label><span>Academic Year</span><select><option>2025/2026</option></select></label>
+        <label><span>Semester</span><select><option>2</option></select></label>
+        <label><span>New Course Unit:</span><select><option></option></select></label>
+      </div>
+      <div class="erp-action-row">
+        <button type="button" class="legacy-action legacy-action--danger">&#9745; Click to Complete Registration</button>
+        <button type="button" class="legacy-action">&#9745; Register Course</button>
+      </div>
+      <div class="legacy-table-tools">
+        <input type="search" placeholder="Enter text to search...">
+      </div>
+      <div class="legacy-table-wrap">
+        ${renderLegacyTable({
+          columns: ["#", "Code", "Course Name", "Credit Units", "Notes & Content", "#"],
+          rows: units.map((unit, index) => [
+            index === 0 ? "*" : "o",
+            unit.course_code,
+            unit.title,
+            unit.credit_units || "4.0",
+            "Y",
+            "Delete",
+          ]),
+          highlightFirst: true,
+        })}
+      </div>
+    `,
+  });
+}
+
+function renderExamResultsErp(workspace) {
+  const rows = workspace.exam_result_rows || [];
+  return renderLegacyPanel({
+    title: "EXAM RESULTS",
+    icon: "&#9636;",
+    body: `
+      <div class="results-status">
+        <strong>RESULTS STATUS: FINAL</strong>
+        <span>PRINTING IS STRICTLY PROHIBITED</span>
+      </div>
+      <div class="result-filter-row">
+        <label>Year of Study <select><option>1</option><option>2</option><option>3</option></select></label>
+        <label>Semester <select><option>2</option><option>1</option></select></label>
+        <strong>Academic Year: <span>2023/2024</span></strong>
+      </div>
+      <div class="legacy-table-wrap">
+        ${renderLegacyTable({
+          columns: ["Code", "Course", "Credit Units", "Mark", "Grade", "Grade Pt", "Comment"],
+          rows: rows.map((row) => [
+            row.code,
+            row.course,
+            row.credit_units,
+            row.mark,
+            row.grade,
+            row.grade_point,
+            row.comment,
+          ]),
+          highlightFirst: true,
+        })}
+      </div>
+      <div class="gpa-block">
+        <div><strong>Year 1 Semester 2 Grade Point Average:</strong><span>4.34</span></div>
+        <div><strong>General Cumulative Grade Point Average:</strong><span>4.58</span></div>
+        <div><strong>Current Degree Class:</strong><span>FIRST CLASS (HONOURS)</span></div>
+        <button type="button" class="legacy-action legacy-action--wide">Submit Complaints...</button>
+      </div>
+    `,
+  });
+}
+
+function renderFeesErp(workspace) {
+  const finance = workspace.finance || {};
+  return renderLegacyPanel({
+    title: "FEES INFORMATION",
+    icon: "&#9637;",
+    body: `
+      <div class="legacy-table-wrap">
+        ${renderLegacyTable({
+          columns: ["#", "Account Item", "Status / Balance"],
+          rows: [
+            [1, "Tuition Balance", finance.tuition_balance || "-"],
+            [2, "Library Clearance", finance.library_status || "-"],
+            [3, "Hostel Status", finance.hostel_status || "-"],
+            [4, "Registration Clearance", workspace.registration?.clearance || "-"],
+          ],
+          highlightFirst: true,
+        })}
+      </div>
+    `,
+  });
+}
+
+function renderTimetableErp(workspace) {
+  const entries = workspace.timetable?.entries || [];
+  return renderLegacyPanel({
+    title: "TIMETABLE INFO",
+    icon: "&#9635;",
+    body: `
+      <form id="timetable-form" class="legacy-form">
+        <label>
+          <span>Available hours per week</span>
+          <input type="number" id="timetable-hours" min="4" max="40" value="${escapeHtml(workspace.timetable?.available_hours_per_week || 12)}">
+        </label>
+        <label>
+          <span>Preferred study times</span>
+          <input type="text" id="timetable-preferences" value="${escapeHtml((workspace.timetable?.preferred_times || ["18:30 - 20:30", "06:30 - 08:30"]).join(", "))}">
+        </label>
+        <button type="submit" class="legacy-action">Generate timetable</button>
+      </form>
+      <div class="legacy-table-wrap">
+        ${renderLegacyTable({
+          columns: ["#", "Day", "Time", "Course", "Duration", "Focus"],
+          rows: entries.map((entry, index) => [
+            index + 1,
+            entry.day,
+            entry.time,
+            entry.course_code,
+            `${entry.duration_hours} hr(s)`,
+            entry.focus,
+          ]),
+        })}
+      </div>
+    `,
+  });
+}
+
+function renderAnnouncementsErp(workspace) {
+  return renderLegacyPanel({
+    title: "NOTIFICATIONS",
+    icon: "&#9888;",
+    body: `
+      <div class="notice-list">
+        ${(workspace.announcements || []).length
+          ? workspace.announcements.map((notice, index) => `
+            <article class="notice-row">
+              <strong>#${index + 1}</strong>
+              <span>${escapeHtml(notice)}</span>
+            </article>
+          `).join("")
+          : `<div class="empty-state">No notifications are available.</div>`}
+      </div>
+    `,
+  });
+}
+
+function renderLibraryErp(workspace) {
+  const rowsHtml = (workspace.resources || [])
+    .map(
+      (resource, index) => `
+        <tr>
+          <td>${escapeHtml(index + 1)}</td>
+          <td>${escapeHtml(resource.course_code)}</td>
+          <td>${escapeHtml(resource.material_label || resource.title)}</td>
+          <td>${escapeHtml(resource.topic || "-")}</td>
+          <td>${escapeHtml(resource.week || "-")}</td>
+          <td>
+            <button type="button" class="legacy-mini-button" data-action="open-resource" data-resource-id="${escapeHtml(resource.resource_id)}">Open</button>
+            <button type="button" class="legacy-mini-button" data-action="open-resource-pdf" data-resource-id="${escapeHtml(resource.resource_id)}" data-translate="true">PDF</button>
+          </td>
+        </tr>
+      `,
+    )
+    .join("");
+  return renderLegacyPanel({
+    title: "LIBRARY CENTRE",
+    icon: "&#9632;",
+    body: `
+      ${renderDataToolbar()}
+      <div class="legacy-table-wrap">
+        ${renderLegacyTableRaw({
+          columns: ["#", "Code", "Resource", "Topic", "Week", "Details"],
+          rowsHtml,
+        })}
+      </div>
+    `,
+  });
+}
+
+function renderFeedbackErp(workspace) {
+  return renderLegacyPanel({
+    title: "LECTURER EVALUATION",
+    icon: "&#9745;",
+    body: `
+      <form id="feedback-form" class="legacy-form">
+        <label><span>Difficulty area</span><input type="text" id="feedback-difficulty" placeholder="Example: ERP workflow mapping" required></label>
+        <label><span>Topic</span><input type="text" id="feedback-topic" placeholder="Optional topic"></label>
+        <label><span>Comment / question</span><textarea id="feedback-comment" rows="4" required></textarea></label>
+        <button type="submit" class="legacy-action">Send feedback</button>
+      </form>
+      <div class="legacy-table-wrap">
+        ${renderLegacyTable({
+          columns: ["#", "Course", "Difficulty Area", "Comment"],
+          rows: (workspace.feedback_history || []).map((entry, index) => [
+            index + 1,
+            entry.course_code,
+            entry.difficulty_area,
+            entry.comment,
+          ]),
+        })}
+      </div>
+    `,
+  });
+}
+
+function renderElearningHero(title) {
+  return `
+    <section class="elearn-card elearn-hero-card">
+      <h2>${escapeHtml(title)}</h2>
+    </section>
+  `;
+}
+
+function renderElearningDashboard(workspace) {
+  const notices = workspace.announcements || [];
+  return `
+    ${renderElearningHero("DIGITAL LEARNING SUPPORT PLATFORM")}
+    <div class="session-chip">&#9635; CURRENT STUDY SESSION :: SEMESTER 2, 2025/2026</div>
+    <div class="elearn-stat-grid">
+      <article class="elearn-stat"><h3>MY STUDY LOAD</h3><strong>${escapeHtml((workspace.registered_course_units || []).length || (workspace.courses || []).length)}</strong><span>Classes Allocated</span><em>&#9632;</em></article>
+      <article class="elearn-stat"><h3>COMMUNICATIONS</h3><strong>0</strong><span>Pending Lecturer Chats</span><em>&#9787;</em></article>
+      <article class="elearn-stat"><h3>KEY DEADLINES</h3><strong>04 May, 2026</strong><span>Examinations Submission</span><em>&#9635;</em></article>
+    </div>
+    <section class="elearn-card notices-card">
+      <h2>&#128226; NOTICES & ANNOUNCEMENTS</h2>
+      <article class="director-message">
+        <span class="notice-date">23 February, 2026</span>
+        <h3>#236 DIRECTOR'S MESSAGE</h3>
+        <p>All students<br>Islamic University In Uganda - Kampala Campus</p>
+        <p>Dear students,</p>
+        <p>Assalam Alaykum Warahmatullah Wabarakatuh</p>
+        ${notices.map((notice) => `<p>${escapeHtml(notice)}</p>`).join("")}
+      </article>
+    </section>
+  `;
+}
+
+function renderElearningClassAllocation(workspace) {
+  const units = workspace.registered_course_units?.length ? workspace.registered_course_units : workspace.courses || [];
+  const rowsHtml = units
+    .map(
+      (unit, index) => `
+        <tr>
+          <td><input type="checkbox" aria-label="Select ${escapeHtml(unit.course_code)}"></td>
+          <td>${escapeHtml(index + 1)}</td>
+          <td>${escapeHtml(unit.course_code)}</td>
+          <td>${escapeHtml(unit.title)}</td>
+          <td>${escapeHtml(unit.class || unit.year_of_study || "BIT YR 3 [DAY]")}</td>
+          <td><span class="hours-pill">${escapeHtml(unit.hours_per_week || 4)}</span></td>
+          <td>${escapeHtml(unit.lecturer || "Lecturer")}</td>
+          <td><button type="button" class="purple-button" data-action="open-course-room" data-course-code="${escapeHtml((workspace.courses || [])[index]?.course_code || currentCourseCode())}">Enroll/View Class</button></td>
+          <td><button type="button" class="purple-button">Inter-Campus</button></td>
+        </tr>
+      `,
+    )
+    .join("");
+  return `
+    <section class="elearn-card">
+      <h2>DIGITAL CLASS ALLOCATION</h2>
+      <div class="elearn-filter-grid">
+        <label><span>Academic Year:</span><select><option>2025/2026</option></select></label>
+        <label><span>Semester:</span><select><option>2</option></select></label>
+        <label><span>Study System</span><select><option>Semester</option></select></label>
+      </div>
+    </section>
+    <section class="elearn-card">
+      <h2>CLASSES</h2>
+      ${renderDataToolbar()}
+      <div class="legacy-table-wrap">
+        ${renderLegacyTableRaw({
+          columns: ["", "#", "Code", "Course Name", "Class", "Hours|Week", "Lecturer", "Enrolment", "Inter-Campus"],
+          rowsHtml,
+        })}
+      </div>
+    </section>
+  `;
+}
+
+function renderElearningExaminations(workspace) {
+  const quizzes = workspace.quizzes || [];
+  const rowsHtml = quizzes
+    .map(
+      (quiz) => `
+        <tr>
+          <td><input type="checkbox" aria-label="Select ${escapeHtml(quiz.title)}"></td>
+          <td>${escapeHtml(quiz.course_code)}</td>
+          <td>${escapeHtml(quiz.title)}</td>
+          <td>${escapeHtml(state.session?.year_of_study || "BIT YR 3 [DAY]")}</td>
+          <td>${escapeHtml(quiz.generated_at || "-")}</td>
+          <td>${escapeHtml(quiz.latest_attempt ? `${quiz.latest_attempt.percentage}%` : "Available")}</td>
+          <td><button type="button" class="purple-button" data-action="open-student-quiz" data-quiz-id="${escapeHtml(quiz.quiz_id)}">Details</button></td>
+        </tr>
+      `,
+    )
+    .join("");
+  return `
+    <section class="elearn-card">
+      <h2>EXAMINATIONS CENTRE</h2>
+      <div class="elearn-filter-grid">
+        <label><span>Academic Year:</span><select><option>2025/2026</option></select></label>
+        <label><span>Semester:</span><select><option>2</option></select></label>
+        <label><span>Study System</span><select><option>Semester</option></select></label>
+      </div>
+    </section>
+    <section class="elearn-card">
+      <h2>EXAMINATIONS</h2>
+      ${renderDataToolbar()}
+      <div class="legacy-table-wrap">
+        ${renderLegacyTableRaw({
+          columns: ["", "Code", "Course Name", "Candidate Class", "Date & Time", "Status", "Details"],
+          rowsHtml,
+        })}
+      </div>
+      ${quizzes.length ? "" : `<div class="legacy-pagination">Showing 0 to 0 of 0 entries <button>Previous</button><button>Next</button></div>`}
+    </section>
+  `;
+}
+
 function renderStudentModule(module) {
   const workspace = state.workspace || {};
 
@@ -1426,6 +2103,85 @@ function renderStudentModule(module) {
             : `<div class="empty-state">No feedback has been submitted yet.</div>`}
         </div>
       `;
+    default:
+      return `<div class="empty-state">This student module is not available yet.</div>`;
+  }
+}
+
+function renderStudentModule(module) {
+  const workspace = state.workspace || {};
+
+  switch (module) {
+    case "profile":
+      if (state.activeModule === "elearning_profile") {
+        return `
+          ${renderElearningHero("MY PROFILE")}
+          <section class="elearn-card">
+            <div class="erp-profile-card erp-profile-card--elearn">
+              <div class="erp-photo-frame">${renderStudentAvatar()}</div>
+              <div class="erp-profile-columns">
+                <div class="erp-profile-row"><strong>Registration No:</strong><span>${escapeHtml(displayRegistrationNumber())}</span></div>
+                <div class="erp-profile-row"><strong>Name:</strong><span>${escapeHtml(displayUserName())}</span></div>
+                <div class="erp-profile-row"><strong>Program:</strong><span>${escapeHtml(state.session?.program || "-")}</span></div>
+                <div class="erp-profile-row"><strong>Campus:</strong><span>${escapeHtml(state.session?.campus || "-")}</span></div>
+              </div>
+            </div>
+          </section>
+        `;
+      }
+      return renderStudentProfileErp(workspace);
+    case "results":
+      return renderExamResultsErp(workspace);
+    case "fees_info":
+      return renderFeesErp(workspace);
+    case "my_timetable":
+      return renderTimetableErp(workspace);
+    case "e_learning_centre":
+      if (state.activeModule === "elearning_dashboard") {
+        return renderElearningDashboard(workspace);
+      }
+      return state.activeCourseUnitCode
+        ? renderStudentCourseResourceView(workspace)
+        : renderElearningClassAllocation(workspace);
+    case "study_planner":
+      return `
+        ${renderElearningHero("DIGITAL LEARNING SUPPORT PLATFORM")}
+        <section class="elearn-card">
+          <h2>USER GUIDE</h2>
+          <form id="study-plan-form" class="legacy-form">
+            <label>
+              <span>Study hours per week</span>
+              <input type="number" id="study-plan-hours" min="4" max="40" value="${escapeHtml(workspace.study_plan?.study_hours_per_week || 12)}">
+            </label>
+            <button type="submit" class="purple-button">Refresh study plan</button>
+          </form>
+          <p class="helper">${escapeHtml(workspace.study_plan?.summary || "No study plan prepared yet.")}</p>
+          <div class="legacy-table-wrap">
+            ${renderLegacyTable({
+              columns: ["Course", "Priority", "Hours", "Reason", "Next Action"],
+              rows: (workspace.study_plan?.recommendations || []).map((recommendation) => [
+                recommendation.course_code,
+                recommendation.priority,
+                recommendation.recommended_hours,
+                recommendation.reason,
+                recommendation.next_action,
+              ]),
+            })}
+          </div>
+        </section>
+      `;
+    case "quiz_centre":
+      return state.activeStudentQuizId && currentStudentQuiz()
+        ? renderStudentQuizDetail(currentStudentQuiz())
+        : renderElearningExaminations(workspace);
+    case "my_registration":
+      return renderRegistrationErp(workspace);
+    case "announcements":
+      return renderAnnouncementsErp(workspace);
+    case "library":
+      return renderLibraryErp(workspace);
+    case "feedback_to_lecturer":
+      return renderFeedbackErp(workspace);
     default:
       return `<div class="empty-state">This student module is not available yet.</div>`;
   }
@@ -1827,6 +2583,14 @@ function renderChatDrawer() {
 
 function renderAuthenticatedApp() {
   showAuthenticated();
+  const shell = activeShell();
+  const stage = document.getElementById("app-stage");
+  const phoneShell = document.querySelector(".phone-shell");
+  stage.dataset.shell = shell;
+  stage.classList.toggle("is-elearning", shell === "elearning");
+  stage.classList.toggle("is-academica", shell === "academica");
+  phoneShell?.classList.toggle("phone-shell--elearning", shell === "elearning");
+  phoneShell?.classList.toggle("phone-shell--academica", shell === "academica");
   setHtml("app-header", renderHeader());
   setHtml("app-main", state.activeModule ? renderModule() : renderHome());
   renderChatDrawer();

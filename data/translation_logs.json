@@ -748,5 +748,48 @@
     ],
     "resolution_source": "profile",
     "timestamp": "2026-05-06T11:11:24+00:00"
+  },
+  {
+    "event": "translation_requested",
+    "student_id": "S001",
+    "course_code": "CSC101",
+    "content_type": "chat",
+    "source_language": "en",
+    "target_language": "sw",
+    "cache_hit": true,
+    "provider": "cache",
+    "glossary_terms_applied": [],
+    "resolution_source": "profile",
+    "timestamp": "2026-06-13T14:58:00+00:00"
+  },
+  {
+    "event": "translation_requested",
+    "student_id": "S001",
+    "course_code": "CSC101",
+    "content_type": "notes",
+    "source_language": "en",
+    "target_language": "sw",
+    "cache_hit": true,
+    "provider": "cache",
+    "glossary_terms_applied": [
+      "ERP"
+    ],
+    "resolution_source": "profile",
+    "timestamp": "2026-06-13T15:06:42+00:00"
+  },
+  {
+    "event": "translation_requested",
+    "student_id": "S001",
+    "course_code": "CSC101",
+    "content_type": "notes",
+    "source_language": "en",
+    "target_language": "sw",
+    "cache_hit": true,
+    "provider": "cache",
+    "glossary_terms_applied": [
+      "ERP"
+    ],
+    "resolution_source": "profile",
+    "timestamp": "2026-06-13T15:06:42+00:00"
   }
 ]

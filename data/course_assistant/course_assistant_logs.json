@@ -218,5 +218,15 @@
     "translate_response": true,
     "match_count": 0,
     "timestamp": "2026-05-05T08:10:28+00:00"
+  },
+  {
+    "event": "chat_answered",
+    "course_code": "CSC101",
+    "student_id": "S001",
+    "resource_id": null,
+    "topic": "ERP foundations",
+    "translate_response": true,
+    "match_count": 0,
+    "timestamp": "2026-06-13T14:58:00+00:00"
   }
 ]

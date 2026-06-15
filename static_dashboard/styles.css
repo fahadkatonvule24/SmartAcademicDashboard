@@ -2334,3 +2334,1211 @@ textarea:focus-visible {
   .portal-footer { padding: 1rem; }
   .datetime-time { font-size: 1.65rem; }
 }
+
+/* ==========================================================================
+   IUIU ERP MOCK INTERFACE OVERRIDE
+   ========================================================================== */
+
+body {
+  background: #e5e5e5;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #001f3f;
+}
+
+body::before,
+body::after,
+.institutional-ribbon,
+.app-stage .portal-footer {
+  display: none !important;
+}
+
+.app-stage,
+.app-stage .phone-card,
+.app-stage .phone-shell {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: #e5e5e5;
+  overflow: visible;
+}
+
+.app-shell {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+#app-header {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+#app-main {
+  min-height: 100vh;
+  padding: 0;
+  background: #e5e5e5;
+}
+
+.is-academica #app-main {
+  margin-left: 230px;
+  padding-top: 68px;
+}
+
+.is-elearning #app-main {
+  margin-left: 250px;
+  padding: 92px 28px 40px;
+  background: #f3f3f3;
+}
+
+.portal-chrome {
+  position: relative;
+  z-index: 20;
+}
+
+.erp-topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 230px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 30px 0 14px;
+  background: #079b88;
+  border-top: 5px solid #4a211e;
+  color: #fff;
+  z-index: 30;
+}
+
+.erp-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 230px;
+  background: #079b88;
+  border-top: 5px solid #4a211e;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.20);
+  z-index: 40;
+}
+
+.erp-logo-card {
+  height: 112px;
+  display: grid;
+  place-items: start center;
+  padding-top: 10px;
+}
+
+.academica-logo {
+  width: 192px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  background: #fff;
+  color: #0a9b2f;
+  line-height: 1;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.45);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.academica-logo strong {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.academica-logo em {
+  color: #f00000;
+  font-size: 12px;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.academica-dots {
+  position: relative;
+  width: 24px;
+  height: 12px;
+  display: block;
+}
+
+.academica-dots i {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #18a73c;
+}
+
+.academica-dots i:nth-child(1) { left: 9px; top: 0; }
+.academica-dots i:nth-child(2) { left: 4px; top: 6px; background: #f00000; }
+.academica-dots i:nth-child(3) { left: 14px; top: 6px; }
+
+.erp-hamburger,
+.erp-top-icon,
+.portal-search button,
+.icon-button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.erp-hamburger {
+  width: 42px;
+  font-size: 25px;
+}
+
+.erp-topbar-spacer {
+  flex: 1;
+}
+
+.portal-search {
+  display: flex;
+  align-items: center;
+  width: min(100%, 192px);
+  height: 31px;
+  background: #c8ece9;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.portal-search input {
+  height: 100%;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #1f3a44;
+  box-shadow: none;
+}
+
+.portal-search button {
+  width: 34px;
+  color: #111;
+  font-size: 16px;
+}
+
+.erp-top-icon {
+  font-size: 21px;
+}
+
+.erp-menu {
+  display: grid;
+  margin-top: 0;
+}
+
+.erp-menu-item {
+  width: 100%;
+  min-height: 56px;
+  display: grid;
+  grid-template-columns: 26px 1fr 18px;
+  align-items: center;
+  gap: 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.42);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 0 14px;
+  background: #079b88;
+  color: #fff;
+  text-align: left;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.erp-menu-item.is-active,
+.erp-menu-group.is-open > .erp-menu-item:first-child {
+  background: #062c2a;
+}
+
+.erp-menu-item--child {
+  min-height: 42px;
+  grid-template-columns: 26px 1fr;
+  padding-left: 12px;
+  background: #26383d;
+  border-color: rgba(255, 255, 255, 0.10);
+  font-size: 13px;
+}
+
+.erp-menu-icon {
+  font-size: 15px;
+}
+
+.erp-menu-caret {
+  justify-self: end;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.erp-page {
+  min-height: calc(100vh - 68px);
+  padding: 0 18px 28px 30px;
+  background: #e5e5e5;
+}
+
+.erp-user-strip {
+  min-height: 78px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 -18px 24px -30px;
+  padding: 0 30px;
+  background: #fff;
+  border-bottom: 1px solid #cfcfcf;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  color: #001126;
+  font-size: 18px;
+}
+
+.erp-logout {
+  border: 1px solid #8aa3c8;
+  background: #e7f0fb;
+  color: #003f8f;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.legacy-panel {
+  border: 1px solid #b7c7d9;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.24);
+}
+
+.legacy-panel-inner {
+  min-height: 420px;
+  border: 1px solid #87a3c8;
+  border-radius: 3px;
+  background: #e8f1fb;
+  padding: 12px 13px 20px;
+}
+
+.legacy-panel-title {
+  width: 400px;
+  max-width: 100%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  background: #6596f7;
+  border-radius: 6px 6px 0 0;
+  color: #fff;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.legacy-title-icon {
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.55);
+  color: #31598d;
+  font-size: 11px;
+}
+
+.legacy-tab {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 6px 14px;
+  border: 1px solid #94aed0;
+  border-bottom: 0;
+  background: #f8fbff;
+  color: #001f3f;
+  font-size: 12px;
+}
+
+.erp-profile-card {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 42px;
+  min-height: 244px;
+  margin: 0 34px 20px;
+  padding: 20px 22px;
+  border: 1px solid #b5c7df;
+  background: #e8f1fb;
+}
+
+.erp-photo-frame {
+  width: 150px;
+  height: 200px;
+  display: grid;
+  place-items: end center;
+  align-self: start;
+  background: linear-gradient(#f40000 0 64%, #f7f7f7 64% 100%);
+  overflow: hidden;
+}
+
+.erp-avatar {
+  width: 118px;
+  height: 118px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: #d7e0e5;
+  color: #334;
+  font-size: 32px;
+  font-weight: 800;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7);
+}
+
+.erp-profile-columns {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr);
+  gap: 34px;
+  align-content: start;
+  padding-top: 3px;
+  font-size: 11.5px;
+}
+
+.erp-profile-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  min-height: 15px;
+}
+
+.erp-profile-row strong {
+  color: #001a42;
+}
+
+.legacy-section-title {
+  margin: 14px 13px 0;
+  padding: 7px 10px;
+  border: 1px solid #89a7cd;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(#dcecfb, #cadcee);
+  color: #002b5e;
+  font-size: 12px;
+}
+
+.legacy-table-wrap {
+  overflow-x: auto;
+  margin: 0 13px 10px;
+}
+
+.legacy-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f8fbff;
+  color: #001126;
+  font-size: 11.5px;
+}
+
+.legacy-table th,
+.legacy-table td {
+  border: 1px solid #b7c8e1;
+  padding: 6px 7px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.legacy-table th {
+  background: #e7f0fa;
+  color: #002b5e;
+  font-weight: 400;
+}
+
+.legacy-table tr.is-highlighted td {
+  background: #fff2b8;
+}
+
+.legacy-empty-cell {
+  text-align: center !important;
+  padding: 12px !important;
+}
+
+.erp-filter-grid,
+.elearn-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 10px;
+  margin: 28px 12px 2px;
+}
+
+.erp-filter-grid label,
+.elearn-filter-grid label,
+.legacy-form label {
+  display: grid;
+  gap: 5px;
+  color: #001a42;
+  font-size: 12px;
+}
+
+.erp-filter-grid select,
+.elearn-filter-grid select,
+.legacy-form input,
+.legacy-form select,
+.legacy-form textarea,
+.legacy-table-tools input,
+.legacy-search-inline input,
+.legacy-show-entries select {
+  min-height: 26px;
+  border: 1px solid #9eb5d4;
+  border-radius: 0;
+  background: #f8fbff;
+  color: #001126;
+  box-shadow: none;
+  padding: 4px 7px;
+}
+
+.erp-action-row {
+  display: grid;
+  grid-template-columns: 285px 300px;
+  justify-content: center;
+  gap: 168px;
+  margin: 2px 0 18px;
+}
+
+.legacy-action,
+.legacy-mini-button {
+  min-height: 27px;
+  border: 1px solid #95aeca;
+  background: linear-gradient(#e9f3ff, #cbdced);
+  color: #003d8f;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.legacy-action--danger {
+  color: #ff0000;
+}
+
+.legacy-action--wide {
+  width: 200px;
+  margin-left: 110px;
+  color: #ff0000;
+}
+
+.legacy-table-tools {
+  margin: 18px 13px 8px;
+}
+
+.legacy-table-tools input {
+  width: 455px;
+  max-width: 100%;
+}
+
+.results-status {
+  display: grid;
+  justify-items: center;
+  margin: 24px 0 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #6da0f4;
+}
+
+.results-status strong {
+  color: #ff0000;
+  font-size: 18px;
+}
+
+.results-status span {
+  color: #000;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.result-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 4px 0 18px;
+  color: #000;
+  font-size: 13px;
+}
+
+.result-filter-row select {
+  height: 22px;
+  border: 1px solid #9eb5d4;
+}
+
+.result-filter-row span,
+.gpa-block span {
+  color: #ff0000;
+}
+
+.gpa-block {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 3px 20px;
+  margin: 22px 0 0;
+  color: #000;
+  font-size: 13px;
+}
+
+.gpa-block .legacy-action {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: start;
+}
+
+.legacy-form {
+  display: grid;
+  gap: 10px;
+  margin: 18px 13px;
+  max-width: 720px;
+}
+
+.notice-list {
+  display: grid;
+  gap: 8px;
+  margin: 22px 13px;
+}
+
+.notice-row {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid #b7c8e1;
+  background: #f8fbff;
+  font-size: 12px;
+}
+
+.legacy-data-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin: 38px 24px 14px;
+  color: #556070;
+  font-size: 12px;
+}
+
+.legacy-show-entries,
+.legacy-search-inline {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legacy-mini-button {
+  padding: 3px 8px;
+  margin-right: 4px;
+}
+
+.elearn-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 250px;
+  background: #fff;
+  border-top: 3px solid #4a211e;
+  z-index: 40;
+  box-shadow: 3px 0 14px rgba(0, 0, 0, 0.07);
+}
+
+.elearn-brand {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 22px 0 30px;
+  color: #111;
+  letter-spacing: 5px;
+}
+
+.elearn-brand strong {
+  font-size: 20px;
+}
+
+.elearn-seal {
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #88d39a;
+  border-radius: 50%;
+  color: #1e9b45;
+  font-size: 10px;
+  letter-spacing: 0;
+}
+
+.elearn-menu-label {
+  margin: 8px 14px 18px;
+  color: #8d96a3;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.elearn-menu {
+  display: grid;
+}
+
+.elearn-menu-item {
+  min-height: 50px;
+  display: grid;
+  grid-template-columns: 28px 1fr 0;
+  align-items: center;
+  border: 0;
+  padding: 0 20px;
+  background: #fff;
+  color: #5c6470;
+  text-align: left;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.elearn-menu-item.is-active {
+  background: #6571ef;
+  color: #fff;
+}
+
+.elearn-menu-caret {
+  display: none;
+}
+
+.elearn-topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 250px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 28px;
+  background: #fff;
+  border-top: 3px solid #4a211e;
+  box-shadow: 0 3px 18px rgba(0, 0, 0, 0.08);
+  z-index: 30;
+}
+
+.elearn-topbar .icon-button {
+  color: #4c4c4c;
+  font-size: 20px;
+}
+
+.elearn-topbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.chat-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #6571ef;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.elearn-topbar .erp-avatar {
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  background: linear-gradient(#f40000 0 46%, #dce6e9 46%);
+  font-size: 11px;
+}
+
+.elearn-page {
+  display: grid;
+  gap: 28px;
+}
+
+.elearn-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  padding: 26px;
+  color: #001126;
+}
+
+.elearn-card h2 {
+  margin: 0 0 18px;
+  color: #111;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+}
+
+.elearn-hero-card {
+  min-height: 150px;
+  align-content: start;
+}
+
+.elearn-hero-card h2 {
+  color: #617082;
+  font-size: 20px;
+}
+
+.session-chip {
+  width: max-content;
+  margin-top: -104px;
+  margin-left: 25px;
+  padding: 11px 14px;
+  border-radius: 4px;
+  background: #6571ef;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(101, 113, 239, 0.4);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.elearn-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 30px;
+}
+
+.elearn-stat {
+  position: relative;
+  min-height: 132px;
+  padding: 22px 70px 18px 25px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.elearn-stat h3 {
+  margin: 0 0 10px;
+  color: #617082;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+}
+
+.elearn-stat strong {
+  color: #4bc767;
+}
+
+.elearn-stat span {
+  margin-left: 12px;
+  color: #9ca7b5;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.elearn-stat em {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #2fcf9a;
+  color: #fff;
+  font-style: normal;
+}
+
+.notices-card h2 {
+  color: #111;
+}
+
+.director-message {
+  position: relative;
+  padding: 10px 16px;
+  color: #63718a;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.director-message h3 {
+  color: #6571ef;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.notice-date {
+  float: right;
+  padding: 5px 13px;
+  border-radius: 999px;
+  background: #4bc767;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.hours-pill {
+  display: inline-grid;
+  place-items: center;
+  min-width: 32px;
+  height: 26px;
+  border-radius: 999px;
+  background: #4bc767;
+  color: #fff;
+  font-weight: 700;
+}
+
+.purple-button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 4px;
+  background: #6571ef;
+  color: #fff;
+  padding: 8px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(101, 113, 239, 0.35);
+}
+
+.legacy-pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 24px 0;
+  color: #6c7685;
+  font-size: 13px;
+}
+
+.legacy-pagination button {
+  border: 0;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  color: #a6b0ff;
+  padding: 8px 13px;
+}
+
+.module-section,
+.resource-card,
+.detail-card,
+.quiz-card,
+.feedback-card {
+  border-radius: 3px;
+}
+
+.chat-fab {
+  right: 24px;
+  bottom: 18px;
+  z-index: 60;
+}
+
+.chat-drawer {
+  z-index: 70;
+}
+
+@media (max-width: 900px) {
+  .erp-sidebar,
+  .elearn-sidebar {
+    width: 76px;
+  }
+
+  .erp-topbar {
+    left: 76px;
+  }
+
+  .elearn-topbar {
+    left: 76px;
+  }
+
+  .is-academica #app-main,
+  .is-elearning #app-main {
+    margin-left: 76px;
+  }
+
+  .academica-logo {
+    width: 56px;
+    font-size: 9px;
+  }
+
+  .academica-logo strong,
+  .academica-logo em,
+  .erp-menu-item span:not(.erp-menu-icon),
+  .erp-menu-caret,
+  .elearn-brand strong,
+  .elearn-menu-item span:not(.erp-menu-icon) {
+    display: none;
+  }
+
+  .erp-menu-item,
+  .elearn-menu-item {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 0;
+  }
+
+  .erp-profile-card,
+  .erp-profile-columns,
+  .elearn-stat-grid,
+  .erp-filter-grid,
+  .elearn-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .erp-action-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 620px) {
+  .is-academica #app-main,
+  .is-elearning #app-main {
+    margin-left: 0;
+    padding-top: 68px;
+  }
+
+  .erp-sidebar,
+  .elearn-sidebar {
+    display: none;
+  }
+
+  .erp-topbar,
+  .elearn-topbar {
+    left: 0;
+  }
+
+  .erp-page {
+    padding: 0 8px 20px;
+  }
+
+  .erp-user-strip {
+    margin: 0 -8px 12px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  .legacy-panel {
+    padding: 8px;
+  }
+
+  .legacy-panel-inner {
+    padding: 8px;
+  }
+
+  .elearn-card {
+    padding: 16px;
+  }
+}
+
+/* Compact alignment pass for E-learning resource/detail views */
+.is-elearning #app-main {
+  padding: 82px 18px 24px;
+}
+
+.elearn-page {
+  gap: 16px;
+  align-content: start;
+}
+
+.elearn-card {
+  padding: 18px;
+  border-radius: 6px;
+}
+
+.elearn-hero-card {
+  min-height: 104px;
+}
+
+.session-chip {
+  margin-top: -76px;
+  margin-left: 18px;
+  padding: 9px 12px;
+}
+
+.elearn-course-stack {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.elearn-course-card,
+.elearn-lecture-card,
+.elearn-lecture-detail {
+  min-height: 0;
+}
+
+.elearn-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.elearn-section-head h2 {
+  margin: 2px 0 0;
+  color: #001126;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.elearn-section-head .helper {
+  max-width: 48%;
+  text-align: right;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.elearn-page .section-kicker {
+  margin: 0;
+  padding-left: 7px;
+  border-left: 3px solid #079b88;
+  color: #078573;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.elearn-resource-toolbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+}
+
+.elearn-page .picker-field {
+  width: min(100%, 260px);
+  min-width: 0;
+  max-width: 260px;
+  gap: 4px;
+}
+
+.elearn-page .picker-field span {
+  color: #1a2d40;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.elearn-page select,
+.elearn-page input,
+.elearn-page textarea {
+  min-height: 34px;
+  border: 1px solid #cbd6e2;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 12px;
+}
+
+.elearn-page .ghost-button,
+.elearn-page .primary-button {
+  min-height: 34px;
+  border-radius: 999px;
+  padding: 8px 14px;
+  box-shadow: none;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.elearn-page .lecture-tab-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.elearn-page .lecture-tab {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  align-content: center;
+  border: 1px solid #c7dcd5;
+  border-radius: 6px;
+  background: #fff;
+  color: #001126;
+  padding: 9px 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.elearn-page .lecture-tab.is-active {
+  background: #007a3d;
+  color: #fff;
+  box-shadow: 0 6px 12px rgba(0, 122, 61, 0.18);
+}
+
+.elearn-page .lecture-tab-title {
+  font-size: 12px;
+}
+
+.elearn-page .lecture-tab-meta {
+  color: #63718a;
+  font-size: 10px;
+}
+
+.elearn-page .lecture-tab.is-active .lecture-tab-meta {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.elearn-page .context-banner {
+  min-height: 0;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #dcece6;
+  color: #00633b;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.elearn-resource-block {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.elearn-page .attachment-list {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.elearn-page .resource-card,
+.elearn-page .attachment-card {
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 4px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+
+.elearn-page .resource-header {
+  align-items: center;
+}
+
+.elearn-page .resource-card h3 {
+  margin: 0;
+  font-size: 13px;
+}
+
+.elearn-page .resource-subtitle,
+.elearn-page .helper {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.elearn-page .row-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.is-elearning .chat-fab {
+  bottom: 18px;
+  right: 18px;
+}
+
+@media (max-width: 900px) {
+  .is-elearning #app-main {
+    padding: 78px 12px 20px;
+  }
+
+  .elearn-section-head {
+    align-items: start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .elearn-section-head .helper {
+    max-width: none;
+    text-align: left;
+  }
+
+  .elearn-resource-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .elearn-page .picker-field {
+    width: 100%;
+    max-width: none;
+  }
+}
