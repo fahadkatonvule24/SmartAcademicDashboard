@@ -91,6 +91,7 @@ class DashboardServiceTests(unittest.TestCase):
     def test_authenticate_user_returns_role_specific_workspace(self) -> None:
         lecturer_login = self.service.authenticate_user(username="lecturer", password="demo123")
         student_login = self.service.authenticate_user(username="student", password="demo123")
+        registration_login = self.service.authenticate_user(username="223-000000-00000", password="demo123")
 
         self.assertEqual(lecturer_login["user"]["role"], "lecturer")
         self.assertEqual(lecturer_login["workspace"]["role"], "lecturer")
@@ -107,6 +108,7 @@ class DashboardServiceTests(unittest.TestCase):
         self.assertTrue(student_login["workspace"]["quick_info_tiles"])
         self.assertTrue(student_login["workspace"]["service_tiles"])
         self.assertGreaterEqual(len(student_login["workspace"]["resources"]), 3)
+        self.assertEqual(registration_login["workspace"]["profile"]["student_id"], "S001")
 
     def test_student_workspace_seeds_clickable_course_resources(self) -> None:
         workspace = self.service.student_workspace(student_id="S001", course_code="BIS210")
@@ -116,6 +118,16 @@ class DashboardServiceTests(unittest.TestCase):
         self.assertEqual([resource["title"] for resource in workspace["resources"][:3]], ["Lecture 1", "Lecture 2", "Lecture 3"])
         self.assertTrue(all(resource["pdf_available"] for resource in workspace["resources"][:3]))
         self.assertEqual(workspace["lecture_sessions"][0]["title"], "Lecture 1")
+
+    def test_student_can_update_preferred_language(self) -> None:
+        profile = self.service.update_student_preferred_language(
+            student_id="S001",
+            preferred_language="French",
+        )
+        workspace = self.service.student_workspace(student_id="S001", course_code="CSC101")
+
+        self.assertEqual(profile["preferred_language"], "fr")
+        self.assertEqual(workspace["profile"]["preferred_language"], "fr")
 
     def test_missed_lecture_session_can_be_created_without_files(self) -> None:
         lecturer_workspace = self.service.lecturer_workspace(lecturer_id="L001", course_code="CSC101")
@@ -286,7 +298,7 @@ class DashboardApiTests(unittest.TestCase):
         self.assertIn("IUIU Kampala Campus", response.text)
         self.assertIn("Kampala Campus Academic ERP System", response.text)
         self.assertIn("IUIU ERP Login", response.text)
-        self.assertIn("Forgot password?", response.text)
+        self.assertIn("Forgotten Password?", response.text)
         self.assertNotIn("E-Learning Centre", response.text)
         self.assertIn("/static/app.js", response.text)
 
@@ -348,6 +360,18 @@ class DashboardApiTests(unittest.TestCase):
             resource_id,
             [resource["resource_id"] for resource in lecturer_workspace.json()["resources"]],
         )
+
+    def test_student_can_update_preferred_language_endpoint(self) -> None:
+        response = self.client.post(
+            "/student/profile/language",
+            json={"student_id": "S001", "preferred_language": "French"},
+        )
+        workspace_response = self.client.get("/student/S001", params={"course_code": "CSC101"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["preferred_language"], "fr")
+        self.assertEqual(workspace_response.status_code, 200)
+        self.assertEqual(workspace_response.json()["profile"]["preferred_language"], "fr")
 
     def test_proposal_specific_endpoints_work_together(self) -> None:
         resource_response = self.client.post(

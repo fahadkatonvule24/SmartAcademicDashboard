@@ -119,13 +119,22 @@ function showLoggedOut() {
   document.getElementById("chat-drawer").classList.add("hidden");
 }
 
-function fillLanguageOptions() {
+function fillLanguageOptions(selectedCode = "") {
   return state.languages
     .map(
       (language) =>
-        `<option value="${escapeHtml(language.code)}">${escapeHtml(language.name)} (${escapeHtml(language.code)})</option>`,
+        `<option value="${escapeHtml(language.code)}" ${
+          language.code === selectedCode ? "selected" : ""
+        }>${escapeHtml(language.name)} (${escapeHtml(language.code)})</option>`,
     )
     .join("");
+}
+
+function fillPreferredLanguageOptions(selectedCode = "") {
+  return `
+    <option value="" ${selectedCode ? "" : "selected"}>Auto</option>
+    ${fillLanguageOptions(selectedCode)}
+  `;
 }
 
 function languageName(code) {
@@ -2114,6 +2123,7 @@ function renderStudentModule(module) {
   switch (module) {
     case "profile":
       if (state.activeModule === "elearning_profile") {
+        const preferredLanguage = workspace.profile?.preferred_language || "";
         return `
           ${renderElearningHero("MY PROFILE")}
           <section class="elearn-card">
@@ -2126,6 +2136,16 @@ function renderStudentModule(module) {
                 <div class="erp-profile-row"><strong>Campus:</strong><span>${escapeHtml(state.session?.campus || "-")}</span></div>
               </div>
             </div>
+            <form id="preferred-language-form" class="legacy-form preferred-language-form">
+              <label>
+                <span>Preferred Language</span>
+                <select id="preferred-language-select">
+                  ${fillPreferredLanguageOptions(preferredLanguage)}
+                </select>
+              </label>
+              <div class="chip">Current: ${escapeHtml(languageName(preferredLanguage))}</div>
+              <button type="submit" class="primary-button">Save Language</button>
+            </form>
           </section>
         `;
       }
@@ -2840,6 +2860,23 @@ async function handleFeedbackSubmit(event) {
   }
 }
 
+async function handlePreferredLanguageSubmit(event) {
+  event.preventDefault();
+  try {
+    await requestJson("/student/profile/language", {
+      method: "POST",
+      body: JSON.stringify({
+        student_id: state.session.student_id,
+        preferred_language: document.getElementById("preferred-language-select").value || null,
+      }),
+    });
+    showAppMessage("Preferred language saved.", "success");
+    await loadCurrentWorkspace();
+  } catch (error) {
+    showAppMessage(error.message, "error");
+  }
+}
+
 async function uploadFilesToLectureSession(sessionId, files) {
   if (!files.length) {
     return;
@@ -3302,6 +3339,8 @@ function bindStaticEvents() {
       handleStudyPlanSubmit(event).catch((error) => showAppMessage(error.message, "error"));
     } else if (event.target.id === "feedback-form") {
       handleFeedbackSubmit(event).catch((error) => showAppMessage(error.message, "error"));
+    } else if (event.target.id === "preferred-language-form") {
+      handlePreferredLanguageSubmit(event).catch((error) => showAppMessage(error.message, "error"));
     } else if (event.target.id === "lecture-session-create-form") {
       handleLectureSessionCreateSubmit(event).catch((error) => showAppMessage(error.message, "error"));
     } else if (event.target.id === "lecture-session-update-form") {

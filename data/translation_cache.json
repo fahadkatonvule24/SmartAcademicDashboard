@@ -467,13 +467,13 @@
       "name": "Swahili",
       "resolution_source": "profile"
     },
-    "provider": "demo_fallback",
-    "translated_text": "[sw demo] Year 3 Semester II 2025/2026. CSC101 EntERPrise Systems lecture one introduces entERPrise rasilimali planning. It explains how registration, finance, and teaching workflows stay connected in one system. Students should identify the major modules and the data each module shares.",
+    "provider": "deep_translator",
+    "translated_text": "Mwaka wa 3 Muhula II 2025/2026. Mhadhara wa kwanza wa CSC101 EntERPrise Systems unatanguliza entERPrise upangaji wa rasilimali. Inafafanua jinsi usajili, fedha, na mtiririko wa kazi wa kufundisha hukaa kushikamana katika mfumo mmoja. Wanafunzi wanapaswa kutambua moduli kuu na data ambayo kila moduli inashiriki.",
     "glossary_terms_applied": [
       "ERP"
     ],
     "cache_hit": false,
-    "translated_at": "2026-04-16T08:57:35+00:00"
+    "translated_at": "2026-06-19T16:44:30+00:00"
   },
   "7d7751b1d83aa8e4d4d9bc4f3c081bfeb8aef55443f570d50cb5a61e0a372d0e": {
     "student_id": "S001",
@@ -556,5 +556,87 @@
     "glossary_terms_applied": [],
     "cache_hit": false,
     "translated_at": "2026-05-05T08:43:56+00:00"
+  },
+  "11fe165d5bbe25e329ef76ec583ad8e5890497204bc586b06947788a8d3ec4a6": {
+    "student_id": "S001",
+    "course_code": "CSC101",
+    "content_type": "chat",
+    "source_language": {
+      "code": "en",
+      "name": "English"
+    },
+    "target_language": {
+      "code": "sw",
+      "name": "Swahili",
+      "resolution_source": "profile"
+    },
+    "provider": "deep_translator",
+    "translated_text": "Kulingana na nyenzo zilizoorodheshwa za CSC101, ushahidi dhabiti zaidi ni: Mhadhara wa 1: CSC101 EntERPrise Systems mhadhara wa kwanza unatanguliza entERPrise upangaji wa rasilimali. Hotuba ya 1: CSC101 EntERPrise Systems hotuba ya kwanza inatanguliza entERPrise upangaji rasilimali.",
+    "glossary_terms_applied": [
+      "ERP"
+    ],
+    "cache_hit": false,
+    "translated_at": "2026-06-19T11:38:37+00:00",
+    "bilingual_text": {
+      "source": "Based on the indexed CSC101 materials, the strongest evidence is: Lecture 1: CSC101 Enterprise Systems lecture one introduces enterprise resource planning. Lecture 1: CSC101 Enterprise Systems lecture one introduces enterprise resource planning.",
+      "translated": "Kulingana na nyenzo zilizoorodheshwa za CSC101, ushahidi dhabiti zaidi ni: Mhadhara wa 1: CSC101 EntERPrise Systems mhadhara wa kwanza unatanguliza entERPrise upangaji wa rasilimali. Hotuba ya 1: CSC101 EntERPrise Systems hotuba ya kwanza inatanguliza entERPrise upangaji rasilimali."
+    }
+  },
+  "e10b16ef7780325b768721dc1ef9e26a2a890446754033a31ccee919a2a846d8": {
+    "student_id": "S001",
+    "course_code": "CSC101",
+    "content_type": "notes",
+    "source_language": {
+      "code": "en",
+      "name": "English"
+    },
+    "target_language": {
+      "code": "sw",
+      "name": "Swahili",
+      "resolution_source": "profile"
+    },
+    "provider": "deep_translator",
+    "translated_text": "Mwaka wa 3 Muhula II 2025/2026. Hotuba ya kwanza ya Mifumo ya Biashara ya CSC101 inatanguliza upangaji wa rasilimali za biashara. Inafafanua jinsi usajili, fedha, na mtiririko wa kazi wa kufundisha hukaa kushikamana katika mfumo mmoja. Wanafunzi wanapaswa kutambua moduli kuu na data ambayo kila moduli inashiriki.",
+    "glossary_terms_applied": [],
+    "cache_hit": false,
+    "translated_at": "2026-06-19T16:45:16+00:00"
+  },
+  "7a71c7ff7cebd88660225c9b974ce8cb852d5369a81dd95053133cf84b78504c": {
+    "student_id": "S001",
+    "course_code": "CSC101",
+    "content_type": "notes",
+    "source_language": {
+      "code": "en",
+      "name": "English"
+    },
+    "target_language": {
+      "code": "sw",
+      "name": "Swahili",
+      "resolution_source": "profile"
+    },
+    "provider": "deep_translator",
+    "translated_text": "Mwaka wa 3 Muhula II 2025/2026. Hotuba ya pili ya Mifumo ya Biashara ya CSC101 inaangazia uchoraji wa ramani ya mtiririko wa kazi. Ujumbe unalinganisha usajili wa wanafunzi, upakiaji wa wahadhiri, rekodi za tathmini na matangazo. Wanafunzi wanapaswa kufuata kila mtiririko wa kazi kutoka kwa uingizaji wa data hadi kuripoti.",
+    "glossary_terms_applied": [],
+    "cache_hit": false,
+    "translated_at": "2026-06-19T16:54:21+00:00"
+  },
+  "318762a7510a787746cad9a61811d7c34821b0c71ac955ed17469f3b3998c853": {
+    "student_id": "S001",
+    "course_code": "CSC101",
+    "content_type": "notes",
+    "source_language": {
+      "code": "en",
+      "name": "English"
+    },
+    "target_language": {
+      "code": "fr",
+      "name": "French",
+      "resolution_source": "profile"
+    },
+    "provider": "deep_translator",
+    "translated_text": "Année 3 Semestre II 2025/2026. La première conférence sur les systèmes d'entreprise CSC101 présente la planification des ressources de l'entreprise. Il explique comment les flux de travail d'inscription, de finance et d'enseignement restent connectés dans un seul système. Les étudiants doivent identifier les principaux modules et les données partagées par chaque module.",
+    "glossary_terms_applied": [],
+    "cache_hit": false,
+    "translated_at": "2026-06-20T18:49:27+00:00"
   }
 }

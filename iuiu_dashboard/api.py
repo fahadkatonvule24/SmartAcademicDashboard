@@ -17,6 +17,11 @@ class ProfileRequest(BaseModel):
     preferred_language: str | None = None
 
 
+class StudentPreferredLanguageRequest(BaseModel):
+    student_id: str
+    preferred_language: str | None = None
+
+
 class LoginRequest(BaseModel):
     username: str
     password: str
@@ -260,6 +265,14 @@ def list_profiles() -> list[dict[str, Any]]:
 def upsert_profile(payload: ProfileRequest) -> dict[str, Any]:
     try:
         return service.upsert_profile(**payload.model_dump())
+    except ValueError as error:
+        raise bad_request(error) from error
+
+
+@app.post("/student/profile/language")
+def update_student_preferred_language(payload: StudentPreferredLanguageRequest) -> dict[str, Any]:
+    try:
+        return service.update_student_preferred_language(**payload.model_dump())
     except ValueError as error:
         raise bad_request(error) from error
 

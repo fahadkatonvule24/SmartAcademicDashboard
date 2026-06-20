@@ -33,7 +33,7 @@ def protect_glossary_terms(
         if isinstance(target_map, dict):
             replacement = str(target_map.get(target_language) or source)
 
-        pattern = re.compile(re.escape(source), flags=re.IGNORECASE)
+        pattern = glossary_term_pattern(source)
         if not pattern.search(protected_text):
             continue
 
@@ -42,6 +42,13 @@ def protect_glossary_terms(
         applied_terms.append(source)
 
     return protected_text, replacements, applied_terms
+
+
+def glossary_term_pattern(source: str) -> re.Pattern[str]:
+    escaped = re.escape(source)
+    prefix = r"(?<!\w)" if source[0].isalnum() else ""
+    suffix = r"(?!\w)" if source[-1].isalnum() else ""
+    return re.compile(f"{prefix}{escaped}{suffix}", flags=re.IGNORECASE)
 
 
 def restore_glossary_terms(text: str, replacements: dict[str, str]) -> str:

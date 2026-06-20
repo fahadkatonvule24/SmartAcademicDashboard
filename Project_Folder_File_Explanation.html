@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IUIU Project Folder and File Explanation</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 16mm 14mm;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: #14212b;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      background: #fff;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #006b5f;
+      line-height: 1.2;
+      page-break-after: avoid;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    h2 {
+      margin: 24px 0 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #8bc7be;
+      font-size: 16px;
+    }
+
+    h3 {
+      margin: 16px 0 6px;
+      font-size: 13px;
+    }
+
+    p {
+      margin: 0 0 8px;
+    }
+
+    .subtitle {
+      margin-bottom: 18px;
+      color: #52616b;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .note {
+      margin: 10px 0;
+      padding: 8px 10px;
+      border-left: 4px solid #009b88;
+      background: #eef8f6;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 14px;
+      page-break-inside: avoid;
+    }
+
+    th,
+    td {
+      border: 1px solid #cfd8dc;
+      padding: 5px 6px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #e4f2ef;
+      color: #003d36;
+      font-weight: 700;
+    }
+
+    code {
+      color: #0b3954;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 10.5px;
+    }
+
+    .path {
+      width: 34%;
+      white-space: nowrap;
+    }
+
+    .section {
+      page-break-inside: auto;
+    }
+
+    .small {
+      color: #52616b;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>IUIU Kampala Campus Academic ERP System</h1>
+  <p class="subtitle">Project folder and file explanation - generated June 15, 2026</p>
+
+  <div class="note">
+    This project is a FastAPI-based academic ERP dashboard. The main deployed app starts from
+    <code>main.py</code>, which exposes <code>iuiu_dashboard.api:app</code>. The app combines an ERP
+    dashboard, NLP translation support, and a course assistant that indexes lecture resources.
+  </div>
+
+  <h2>High Level Flow</h2>
+  <table>
+    <tr><th>Layer</th><th>What It Does</th></tr>
+    <tr>
+      <td class="path"><code>main.py</code></td>
+      <td>Imports the integrated FastAPI app from <code>iuiu_dashboard.api</code>. Hosting platforms use this as the entry point.</td>
+    </tr>
+    <tr>
+      <td class="path"><code>iuiu_dashboard/api.py</code></td>
+      <td>Defines HTTP routes for login, workspaces, resources, quizzes, feedback, PDFs, translation, chat, and admin tools.</td>
+    </tr>
+    <tr>
+      <td class="path"><code>iuiu_dashboard/service.py</code></td>
+      <td>Contains the main business logic and coordinates the translation and course assistant modules.</td>
+    </tr>
+    <tr>
+      <td class="path"><code>data/</code></td>
+      <td>Stores local JSON data and uploaded resources. It acts as the project's lightweight database.</td>
+    </tr>
+    <tr>
+      <td class="path"><code>static_dashboard/</code></td>
+      <td>Provides the main browser interface used by students and lecturers.</td>
+    </tr>
+  </table>
+
+  <h2>Top Level Files</h2>
+  <table>
+    <tr><th>File</th><th>What It Does</th></tr>
+    <tr><td class="path"><code>.env.example</code></td><td>Example environment variables for app port, data paths, translation provider, and course assistant settings.</td></tr>
+    <tr><td class="path"><code>.gitignore</code></td><td>Prevents Git from tracking virtual environments, caches, local environment files, logs, and local tool settings.</td></tr>
+    <tr><td class="path"><code>DEPLOYMENT.md</code></td><td>Deployment guide for local runs, Docker, and hosted platforms such as Render, Railway, or Heroku-style services.</td></tr>
+    <tr><td class="path"><code>Dockerfile</code></td><td>Builds a Python 3.12 container, installs requirements, copies the app, and starts Uvicorn.</td></tr>
+    <tr><td class="path"><code>IUIU_Kampala_ERP_Final_Project_Report.docx</code></td><td>The final project report document.</td></tr>
+    <tr><td class="path"><code>main.py</code></td><td>Main deployment entry point. It imports <code>app</code> from <code>iuiu_dashboard.api</code>.</td></tr>
+    <tr><td class="path"><code>Procfile</code></td><td>Heroku-style process definition for running <code>uvicorn main:app</code>.</td></tr>
+    <tr><td class="path"><code>README.md</code></td><td>Project overview, feature list, run commands, test command, project structure, and deployment summary.</td></tr>
+    <tr><td class="path"><code>render.yaml</code></td><td>Render platform configuration: build command, start command, health check path, and environment variables.</td></tr>
+    <tr><td class="path"><code>requirements.txt</code></td><td>Python package dependencies: FastAPI, Uvicorn, deep-translator, and multipart upload support.</td></tr>
+    <tr><td class="path"><code>runtime.txt</code></td><td>Python runtime version for compatible hosting platforms.</td></tr>
+  </table>
+
+  <h2>Main Project Folders</h2>
+  <table>
+    <tr><th>Folder</th><th>What It Contains</th></tr>
+    <tr><td class="path"><code>iuiu_dashboard/</code></td><td>The integrated ERP backend: authentication, student and lecturer workspaces, lecture sessions, quizzes, PDFs, study planning, feedback, and chat.</td></tr>
+    <tr><td class="path"><code>static_dashboard/</code></td><td>The main browser UI for login, ERP pages, student modules, lecturer modules, and e-learning views.</td></tr>
+    <tr><td class="path"><code>iuiu_nlp/</code></td><td>The NLP translation module: profiles, nationality language mapping, glossary protection, cache, logs, and providers.</td></tr>
+    <tr><td class="path"><code>static/</code></td><td>Standalone browser UI for the translation module.</td></tr>
+    <tr><td class="path"><code>iuiu_course_assistant/</code></td><td>Resource indexing and grounded course-question answering module.</td></tr>
+    <tr><td class="path"><code>static_course_assistant/</code></td><td>Standalone browser UI for the course assistant.</td></tr>
+    <tr><td class="path"><code>data/</code></td><td>Local JSON-backed persistence and uploaded lecture resource files.</td></tr>
+    <tr><td class="path"><code>tests/</code></td><td>Automated unit and API tests for the translation service, course assistant, and integrated dashboard.</td></tr>
+    <tr><td class="path"><code>nlp_translation_service/</code></td><td>Compatibility wrapper that exposes the NLP app from the older import path.</td></tr>
+  </table>
+
+  <h2><code>iuiu_dashboard/</code></h2>
+  <table>
+    <tr><th>File</th><th>What It Does</th></tr>
+    <tr><td class="path"><code>__init__.py</code></td><td>Exports <code>IntegratedDashboardService</code> for convenient imports.</td></tr>
+    <tr><td class="path"><code>api.py</code></td><td>FastAPI route layer for the full ERP. It serves the main frontend and exposes authentication, lecturer, student, admin, quiz, feedback, resource, PDF, translation, and chat endpoints.</td></tr>
+    <tr><td class="path"><code>service.py</code></td><td>Main business logic. Builds demo users, authenticates users, prepares student/lecturer workspaces, creates lecture sessions, generates quizzes, handles quiz attempts, creates study plans and timetables, translates resources, builds PDFs, and coordinates chat.</td></tr>
+    <tr><td class="path"><code>storage.py</code></td><td>JSON repository classes for dashboard data: timetables, study plans, quizzes, quiz attempts, lecture sessions, and feedback.</td></tr>
+  </table>
+
+  <h2><code>static_dashboard/</code></h2>
+  <table>
+    <tr><th>File</th><th>What It Does</th></tr>
+    <tr><td class="path"><code>index.html</code></td><td>Main ERP HTML shell. Contains the login page and empty containers that JavaScript fills after login.</td></tr>
+    <tr><td class="path"><code>styles.css</code></td><td>Main stylesheet. Defines the screenshot-style login page, ERP portal chrome, e-learning layout, tables, cards, forms, and responsive behavior.</td></tr>
+    <tr><td class="path"><code>app.js</code></td><td>Main frontend controller. Handles login/logout, API requests, rendering student and lecturer modules, course rooms, resources, PDFs, quizzes, feedback, chat, timetable forms, study-plan forms, and navigation.</td></tr>
+    <tr><td class="path"><code>favicon.svg</code></td><td>IUIU browser icon.</td></tr>
+  </table>
+
+  <h2><code>iuiu_nlp/</code></h2>
+  <table>
+    <tr><th>File</th><th>What It Does</th></tr>
+    <tr><td class="path"><code>__init__.py</code></td><td>Package marker and module docstring.</td></tr>
+    <tr><td class="path"><code>api.py</code></td><td>Standalone translation FastAPI app. Serves the translation UI and routes for health, languages, profiles, glossary, and translation.</td></tr>
+    <tr><td class="path"><code>config.py</code></td><td>Loads translation settings from environment variables, including data directory, provider, default source language, fallback language, and bilingual behavior.</td></tr>
+    <tr><td class="path"><code>languages.py</code></td><td>Defines supported languages, maps nationalities to languages, and resolves the final target language from override, profile, nationality, or fallback.</td></tr>
+    <tr><td class="path"><code>providers.py</code></td><td>Translation provider implementations. Includes demo translation, Deep Translator integration, glossary term protection, and glossary term restoration.</td></tr>
+    <tr><td class="path"><code>service.py</code></td><td>Translation workflow. Manages profiles, glossary terms, cache lookup, provider translation, bilingual output, and audit logging.</td></tr>
+    <tr><td class="path"><code>storage.py</code></td><td>JSON repositories for student profiles, glossary, translation cache, audit logs, and nationality-language mappings.</td></tr>
+  </table>
+
+  <h2><code>static/</code> Translation Frontend</h2>
+  <table>
+    <tr><th>File</th><th>What It Does</th></tr>
+    <tr><td class="path"><code>index.html</code></td><td>Standalone NLP translation portal page with profile, glossary, and translation forms.</td></tr>
+    <tr><td class="path"><code>app.js</code></td><td>Frontend logic for health checks, loading languages, saving profiles, adding glossary terms, sending translation requests, and rendering results.</td></tr>
+    <tr><td class="path"><code>styles.css</code></td><td>Styling for the standalone translation portal.</td></tr>
+    <tr><td class="path"><code>favicon.svg</code></td><td>IUIU browser icon.</td></tr>
+  </table>
+
+  <h2><code>iuiu_course_assistant/</code></h2>
+  <table>
+    <tr><th>File</th><th>What It Does</th></tr>
+    <tr><td class="path"><code>__init__.py</code></td><td>Exports <code>CourseAssistantService</code>.</td></tr>
+    <tr><td class="path"><code>api.py</code></td><td>Standalone course assistant FastAPI app. Serves the course assistant UI and routes for resources, uploads, health, and chat.</td></tr>
+    <tr><td class="path"><code>config.py</code></td><td>Loads course assistant settings: data directory, upload directory, answer provider, chunk size, overlap, top-k count, and translation toggle.</td></tr>
+    <tr><td class="path"><code>extractors.py</code></td><td>Extracts text from uploaded files such as text, Markdown, CSV, JSON, HTML, DOCX, and simple PDFs.</td></tr>
+    <tr><td class="path"><code>providers.py</code></td><td>Answer provider interface and demo grounded answer provider used to build answers from retrieved lecture chunks.</td></tr>
+    <tr><td class="path"><code>retrieval.py</code></td><td>Tokenizes text, splits notes into chunks, ranks chunks against a question, and selects the best supporting snippet.</td></tr>
+    <tr><td class="path"><code>service.py</code></td><td>Indexes pasted or uploaded resources, stores uploads, creates searchable chunks, answers course questions with citations, and optionally translates answers.</td></tr>
+    <tr><td class="path"><code>storage.py</code></td><td>JSON repositories for resources, indexed chunks, and course assistant audit logs.</td></tr>
+    <tr><td class="path"><code>translation_bridge.py</code></td><td>Connects the course assistant to the NLP translation service when translation is enabled.</td></tr>
+  </table>
+
+  <h2><code>static_course_assistant/</code></h2>
+  <table>
+    <tr><th>File</th><th>What It Does</th></tr>
+    <tr><td class="path"><code>index.html</code></td><td>Standalone course assistant page with resource ingestion, library, and chatbot sections.</td></tr>
+    <tr><td class="path"><code>app.js</code></td><td>Frontend logic for indexing notes/files, loading resources, asking course questions, and rendering answers, citations, and translations.</td></tr>
+    <tr><td class="path"><code>styles.css</code></td><td>Styling for the standalone course assistant portal.</td></tr>
+    <tr><td class="path"><code>favicon.svg</code></td><td>IUIU browser icon.</td></tr>
+  </table>
+
+  <h2><code>nlp_translation_service/</code></h2>
+  <table>
+    <tr><th>File</th><th>What It Does</th></tr>
+    <tr><td class="path"><code>__init__.py</code></td><td>Re-exports <code>app</code> from <code>main.py</code> in this compatibility package.</td></tr>
+    <tr><td class="path"><code>main.py</code></td><td>Imports and exposes the standalone NLP app from <code>iuiu_nlp.api</code>. This preserves an older deployment/import path.</td></tr>
+  </table>
+
+  <h2><code>data/</code> Root Files</h2>
+  <table>
+    <tr><th>File</th><th>What It Stores</th></tr>
+    <tr><td class="path"><code>glossary.json</code></td><td>Course glossary. Currently includes CSC101 terms such as ERP, quiz, and dashboard with target translations.</td></tr>
+    <tr><td class="path"><code>nationality_language_map.json</code></td><td>Maps nationalities to default target languages, for example Kenya to Swahili and Uganda to English.</td></tr>
+    <tr><td class="path"><code>profiles.json</code></td><td>Student translation profiles, nationalities, preferred languages, and update timestamps.</td></tr>
+    <tr><td class="path"><code>translation_cache.json</code></td><td>Cached translation results so repeated requests can be served without translating again.</td></tr>
+    <tr><td class="path"><code>translation_logs.json</code></td><td>Audit log of translation requests, cache hits, provider used, glossary terms applied, and timestamps.</td></tr>
+  </table>
+
+  <h2><code>data/course_assistant/</code></h2>
+  <table>
+    <tr><th>File or Folder</th><th>What It Stores</th></tr>
+    <tr><td class="path"><code>resources.json</code></td><td>Metadata for indexed course resources: resource ID, course code, title, topic, version, source type, file name, and timestamps.</td></tr>
+    <tr><td class="path"><code>resource_chunks.json</code></td><td>Searchable chunks produced from course resources. The course assistant ranks these chunks when answering questions.</td></tr>
+    <tr><td class="path"><code>course_assistant_logs.json</code></td><td>Course assistant activity log for indexing and chat-answer events.</td></tr>
+    <tr><td class="path"><code>uploads/</code></td><td>Physical uploaded or generated resource files used by the course assistant.</td></tr>
+  </table>
+
+  <h3>Files in <code>data/course_assistant/uploads/</code></h3>
+  <table>
+    <tr><th>File</th><th>Meaning</th></tr>
+    <tr><td><code>0f241b0c2568-lecture-1.txt</code>, <code>fecf137a690a-lecture-1.txt</code></td><td>CSC101 Lecture 1, ERP foundations.</td></tr>
+    <tr><td><code>1ac006b569cf-lecture-2.txt</code>, <code>8ca45870085e-lecture-2.txt</code></td><td>CSC101 Lecture 2, workflow integration.</td></tr>
+    <tr><td><code>358c3b13b3f4-lecture-3.txt</code>, <code>fbb54e1d3638-lecture-3.txt</code></td><td>CSC101 Lecture 3, reports and decision support.</td></tr>
+    <tr><td><code>4c4b93e90439-lecture-1.txt</code>, <code>bf2128b411a4-lecture-1.txt</code></td><td>BIT220 Lecture 1, database modelling.</td></tr>
+    <tr><td><code>7ccb9a033648-lecture-2.txt</code>, <code>d30a6de1f560-lecture-2.txt</code></td><td>BIT220 Lecture 2, normalization.</td></tr>
+    <tr><td><code>ea98fd2dfc60-lecture-3.txt</code>, <code>a090fbd3abbb-lecture-3.txt</code></td><td>BIT220 Lecture 3, query design.</td></tr>
+    <tr><td><code>f9c9a301a0d8-lecture-1.txt</code>, <code>3d7086a9defd-lecture-1.txt</code></td><td>BIS210 Lecture 1, systems overview.</td></tr>
+    <tr><td><code>9c63cb72e88b-lecture-2.txt</code>, <code>d7230f336720-lecture-2.txt</code></td><td>BIS210 Lecture 2, requirements and use cases.</td></tr>
+    <tr><td><code>e151d441a8b4-lecture-3.txt</code>, <code>ee463615f29d-lecture-3.txt</code></td><td>BIS210 Lecture 3, process modelling.</td></tr>
+    <tr><td><code>1651c791a7c6-iuiu-dfds-processmapping-with-gantt-6weeks.docx</code></td><td>Uploaded DOCX project/process mapping document indexed as Week 3 ERP Notes.</td></tr>
+  </table>
+
+  <h2><code>data/dashboard/</code></h2>
+  <table>
+    <tr><th>File</th><th>What It Stores</th></tr>
+    <tr><td class="path"><code>feedback.json</code></td><td>Student feedback submitted to lecturers, including difficulty area, comment, course code, and status.</td></tr>
+    <tr><td class="path"><code>lecture_sessions.json</code></td><td>Lecture sessions by lecturer/course, including lecture number, title, topic, status, date/week, notes, and attachments.</td></tr>
+    <tr><td class="path"><code>quizzes.json</code></td><td>Generated quizzes, questions, answer indexes, source resource IDs, and quiz metadata.</td></tr>
+    <tr><td class="path"><code>quiz_attempts.json</code></td><td>Student quiz submissions, selected answers, grading result, score, percentage, and submission timestamp.</td></tr>
+    <tr><td class="path"><code>study_plans.json</code></td><td>Generated study recommendations for students, including priority, recommended hours, reasons, and next actions.</td></tr>
+    <tr><td class="path"><code>timetables.json</code></td><td>Generated student study timetable entries by day, time, course, duration, and focus.</td></tr>
+  </table>
+
+  <h2><code>tests/</code></h2>
+  <table>
+    <tr><th>File</th><th>What It Tests</th></tr>
+    <tr><td class="path"><code>test_service.py</code></td><td>NLP translation service behavior: language resolution, glossary protection, caching, UI route, and compatibility import path.</td></tr>
+    <tr><td class="path"><code>test_course_assistant.py</code></td><td>Course assistant behavior: indexing, versioning, grounded answers, citations, translation bridge, DOCX extraction, and API routes.</td></tr>
+    <tr><td class="path"><code>test_dashboard.py</code></td><td>Integrated ERP behavior: authentication, workspaces, lecture sessions, quizzes, PDFs, feedback, study plans, and dashboard API routes.</td></tr>
+  </table>
+
+  <h2>Local or Generated Folders</h2>
+  <table>
+    <tr><th>Folder</th><th>What It Is</th></tr>
+    <tr><td class="path"><code>.git/</code></td><td>Git history and repository metadata. Do not edit manually.</td></tr>
+    <tr><td class="path"><code>.venv/</code></td><td>Local Python virtual environment. Generated locally and ignored by Git.</td></tr>
+    <tr><td class="path"><code>.pytest_cache/</code></td><td>Pytest cache. Generated by test runs.</td></tr>
+    <tr><td class="path"><code>.mypy_cache/</code></td><td>Type-checking cache. Generated by mypy if used.</td></tr>
+    <tr><td class="path"><code>.tmp_test/</code></td><td>Temporary test directories. Generated during tests.</td></tr>
+    <tr><td class="path"><code>__pycache__/</code></td><td>Python bytecode cache. Generated automatically.</td></tr>
+    <tr><td class="path"><code>.claude/</code></td><td>Local Claude/Codex tool settings. Not part of application logic.</td></tr>
+  </table>
+
+  <p class="small">
+    Note: The application currently uses local JSON files as persistence. For deployment, the data paths should point to persistent storage so uploaded resources, profiles, logs, and quiz records survive restarts.
+  </p>
+</body>
+</html>

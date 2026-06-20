@@ -22,6 +22,8 @@ from .storage import (
     TranslationCacheRepository,
 )
 
+CACHE_SCHEMA_VERSION = "translation-v2"
+
 
 def utc_now_iso() -> str:
     return datetime.now(UTC).replace(microsecond=0).isoformat()
@@ -175,16 +177,19 @@ class TranslationService:
         )
 
         glossary_terms = self.glossary.get_terms(course_code)
+        requested_provider_name = (
+            "identity" if language_decision.code == source else self.provider.name
+        )
         cache_key = self._build_cache_key(
             text=text,
             course_code=course_code,
             source_language=source,
             target_language=language_decision.code,
             glossary_terms=glossary_terms,
-            provider_name="identity" if language_decision.code == source else self.provider.name,
+            provider_name=requested_provider_name,
         )
         cached = self.cache.get(cache_key)
-        if cached:
+        if cached and cached.get("provider") == requested_provider_name:
             cached_result = dict(cached)
             cached_result["cache_hit"] = True
             self._log_translation(
@@ -253,7 +258,17 @@ class TranslationService:
                 "translated": translated_text,
             }
 
-        self.cache.set(cache_key, result)
+        result_cache_key = cache_key
+        if provider_name != requested_provider_name:
+            result_cache_key = self._build_cache_key(
+                text=text,
+                course_code=course_code,
+                source_language=source,
+                target_language=language_decision.code,
+                glossary_terms=glossary_terms,
+                provider_name=provider_name,
+            )
+        self.cache.set(result_cache_key, result)
         self._log_translation(
             student_id=student_id.strip(),
             course_code=course_code,
@@ -278,6 +293,7 @@ class TranslationService:
         provider_name: str,
     ) -> str:
         digest_input = {
+            "cache_schema_version": CACHE_SCHEMA_VERSION,
             "course_code": course_code.upper() if course_code else None,
             "glossary_terms": glossary_terms,
             "provider_name": provider_name,

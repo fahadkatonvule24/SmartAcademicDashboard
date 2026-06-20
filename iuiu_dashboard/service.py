@@ -95,7 +95,7 @@ class IntegratedDashboardService:
         if not password:
             raise ValueError("password is required")
 
-        user = self.mock_users.get(username.strip().casefold())
+        user = self._lookup_login_user(username)
         if user is None or user["password"] != password:
             raise ValueError("Invalid username or password")
 
@@ -122,7 +122,7 @@ class IntegratedDashboardService:
         if not username.strip():
             raise ValueError("username is required")
 
-        user = self.mock_users.get(username.strip().casefold())
+        user = self._lookup_login_user(username)
         destination = self._mask_email(user.get("email")) if user else "your registered email"
         return {
             "message": "If the account exists, reset instructions have been sent.",
@@ -237,6 +237,24 @@ class IntegratedDashboardService:
             student_id=student_id,
             nationality=nationality,
             preferred_language=preferred_language,
+        )
+
+    def update_student_preferred_language(
+        self,
+        *,
+        student_id: str,
+        preferred_language: str | None = None,
+    ) -> dict[str, Any]:
+        user = self._lookup_user(expected_role="student", student_id=student_id)
+        if user is None:
+            raise ValueError("Student not found")
+
+        profile = self.translation_service.get_profile(student_id.strip())
+        nationality = (profile or {}).get("nationality") or user.get("nationality")
+        return self.translation_service.upsert_profile(
+            student_id=student_id.strip(),
+            nationality=nationality,
+            preferred_language=(preferred_language or "").strip() or None,
         )
 
     def glossary_overview(self) -> list[dict[str, Any]]:
@@ -1293,6 +1311,22 @@ class IntegratedDashboardService:
         if not courses:
             return None
         return courses[0]["course_code"]
+
+    def _lookup_login_user(self, username: str) -> dict[str, Any] | None:
+        normalized = username.strip().casefold()
+        user = self.mock_users.get(normalized)
+        if user is not None:
+            return user
+
+        for candidate in self.mock_users.values():
+            accepted_ids = [
+                candidate.get("registration_number"),
+                candidate.get("student_id"),
+                candidate.get("lecturer_id"),
+            ]
+            if any(str(value).strip().casefold() == normalized for value in accepted_ids if value):
+                return candidate
+        return None
 
     def _lookup_user(
         self,
