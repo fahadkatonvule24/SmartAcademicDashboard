@@ -2279,7 +2279,7 @@ function renderLecturerModule(module) {
           </label>
           <label>
             <span>Questions</span>
-            <input type="number" id="quiz-question-count" min="2" max="5" value="3">
+            <input type="number" id="quiz-question-count" min="2" value="10">
           </label>
           <button type="submit" class="primary-button">Generate quiz</button>
         </form>

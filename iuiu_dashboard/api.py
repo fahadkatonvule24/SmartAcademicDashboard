@@ -110,7 +110,7 @@ class QuizGenerateRequest(BaseModel):
     course_code: str
     topic: str | None = None
     resource_id: str | None = None
-    question_count: int = Field(default=3, ge=2, le=5)
+    question_count: int = Field(default=3, ge=2)
 
 
 class QuizAttemptRequest(BaseModel):

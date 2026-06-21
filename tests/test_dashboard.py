@@ -195,6 +195,58 @@ class DashboardServiceTests(unittest.TestCase):
         self.assertEqual(student_session["attachment_count"], 2)
         self.assertEqual(len(student_session["attachments"]), 2)
 
+    def test_legacy_resource_is_grouped_under_matching_lecture_session(self) -> None:
+        self.service.lecturer_workspace(lecturer_id="L001", course_code="CSC101")
+        legacy_resource = self.service.add_text_resource(
+            lecturer_id="L001",
+            course_code="CSC101",
+            title="Lecture 1",
+            topic="ERP foundations",
+            week="Week 1",
+            content_text="Standalone lecture one notes imported before session tracking existed.",
+        )
+
+        workspace = self.service.lecturer_workspace(lecturer_id="L001", course_code="CSC101")
+        matching_sessions = [
+            session
+            for session in workspace["lecture_sessions"]
+            if any(
+                attachment["resource_id"] == legacy_resource["resource_id"]
+                for attachment in session["attachments"]
+            )
+        ]
+
+        self.assertEqual(len(matching_sessions), 1)
+        self.assertFalse(matching_sessions[0]["session_id"].startswith("legacy-"))
+
+    def test_legacy_lecture_session_can_accept_new_attachments(self) -> None:
+        legacy_resource = self.service.add_text_resource(
+            lecturer_id="L001",
+            course_code="CSC101",
+            title="Lecture 9",
+            topic="Capstone review",
+            week="Week 9",
+            content_text="Standalone lecture nine notes imported before session tracking existed.",
+        )
+        legacy_session_id = f"legacy-{legacy_resource['resource_id']}"
+
+        attachment_payload = self.service.add_session_attachments(
+            session_id=legacy_session_id,
+            lecturer_id="L001",
+            files=[
+                {
+                    "filename": "capstone-review.txt",
+                    "content": b"New capstone attachment for the materialized lecture session.",
+                    "content_type": "text/plain",
+                },
+            ],
+        )
+        linked_resource = self.service.course_service.get_resource(legacy_resource["resource_id"])
+
+        self.assertFalse(attachment_payload["session"]["session_id"].startswith("legacy-"))
+        self.assertEqual(attachment_payload["session"]["attachment_count"], 2)
+        self.assertEqual(linked_resource["session_id"], attachment_payload["session"]["session_id"])
+
     def test_student_support_modules_generate_timetable_and_study_plan(self) -> None:
         timetable = self.service.generate_student_timetable(
             student_id="S001",
@@ -460,6 +512,42 @@ class DashboardApiTests(unittest.TestCase):
         self.assertEqual(lecturer_feedback.status_code, 200)
         self.assertEqual(lecturer_feedback.json()["total_count"], 1)
 
+    def test_quiz_generator_accepts_more_than_five_questions(self) -> None:
+        resource_response = self.client.post(
+            "/admin/resources/text",
+            json={
+                "lecturer_id": "L001",
+                "course_code": "CSC101",
+                "title": "Extended Quiz Notes",
+                "topic": "ERP workflow",
+                "content_text": (
+                    "Registration coordinates student records across every department. "
+                    "Finance reconciles payments before examination cards are printed. "
+                    "Lecturers upload resources so students can revise independently. "
+                    "Translation support improves comprehension for multilingual learners. "
+                    "Dashboards summarize performance patterns for academic decisions. "
+                    "Notifications remind students about lectures and assessment deadlines. "
+                    "Feedback helps lecturers identify topics that need revision. "
+                    "Quizzes measure understanding after students review the lecture notes."
+                ),
+            },
+        )
+        self.assertEqual(resource_response.status_code, 200)
+
+        quiz_response = self.client.post(
+            "/lecturer/quizzes/generate",
+            json={
+                "lecturer_id": "L001",
+                "course_code": "CSC101",
+                "resource_id": resource_response.json()["resource_id"],
+                "question_count": 8,
+            },
+        )
+
+        self.assertEqual(quiz_response.status_code, 200)
+        self.assertEqual(quiz_response.json()["question_count"], 8)
+        self.assertEqual(len(quiz_response.json()["questions"]), 8)
+
     def test_student_pdf_endpoint_returns_translated_and_original_documents(self) -> None:
         workspace_response = self.client.get("/student/S001", params={"course_code": "CSC101"})
         self.assertEqual(workspace_response.status_code, 200)
@@ -529,3 +617,37 @@ class DashboardApiTests(unittest.TestCase):
 
         self.assertEqual(grouped_session["attachment_count"], 2)
         self.assertEqual(len(grouped_session["attachments"]), 2)
+
+    def test_legacy_lecture_session_endpoint_accepts_attachment_uploads(self) -> None:
+        resource_response = self.client.post(
+            "/admin/resources/text",
+            json={
+                "lecturer_id": "L001",
+                "course_code": "CSC101",
+                "title": "Lecture 9",
+                "topic": "Capstone review",
+                "week": "Week 9",
+                "content_text": "Standalone notes imported before session tracking existed.",
+            },
+        )
+        self.assertEqual(resource_response.status_code, 200)
+        legacy_session_id = f"legacy-{resource_response.json()['resource_id']}"
+
+        attachments_response = self.client.post(
+            f"/lecturer/sessions/{legacy_session_id}/attachments",
+            data={"lecturer_id": "L001"},
+            files=[
+                (
+                    "files",
+                    (
+                        "capstone-review.txt",
+                        b"New attachment for a legacy lecture session.",
+                        "text/plain",
+                    ),
+                ),
+            ],
+        )
+
+        self.assertEqual(attachments_response.status_code, 200)
+        self.assertFalse(attachments_response.json()["session"]["session_id"].startswith("legacy-"))
+        self.assertEqual(attachments_response.json()["session"]["attachment_count"], 2)

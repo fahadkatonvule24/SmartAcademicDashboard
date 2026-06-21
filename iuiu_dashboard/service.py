@@ -372,11 +372,10 @@ class IntegratedDashboardService:
         date_or_week: str | None = None,
         notes_text: str | None = None,
     ) -> dict[str, Any]:
-        session = self.lecture_sessions.get(session_id.strip())
-        if session is None:
-            raise ValueError("Lecture session not found")
-        if session.get("lecturer_id") != lecturer_id.strip():
-            raise ValueError("Lecture session does not belong to this lecturer")
+        session = self._resolve_mutable_lecture_session(
+            session_id=session_id,
+            lecturer_id=lecturer_id,
+        )
 
         updated = dict(session)
         if lecture_number is not None:
@@ -409,11 +408,10 @@ class IntegratedDashboardService:
         lecturer_id: str,
         files: list[dict[str, Any]],
     ) -> dict[str, Any]:
-        session = self.lecture_sessions.get(session_id.strip())
-        if session is None:
-            raise ValueError("Lecture session not found")
-        if session.get("lecturer_id") != lecturer_id.strip():
-            raise ValueError("Lecture session does not belong to this lecturer")
+        session = self._resolve_mutable_lecture_session(
+            session_id=session_id,
+            lecturer_id=lecturer_id,
+        )
         if not files:
             raise ValueError("At least one file is required")
 
@@ -755,7 +753,8 @@ class IntegratedDashboardService:
         if not resources:
             raise ValueError("No indexed resources available for quiz generation")
 
-        chosen_resources = resources[: max(question_count, 1)]
+        requested_question_count = max(int(question_count), 2)
+        chosen_resources = resources[: max(requested_question_count, 1)]
         text_pool = "\n\n".join(
             self._resource_text(resource["resource_id"]) or resource.get("excerpt", "")
             for resource in chosen_resources
@@ -763,7 +762,7 @@ class IntegratedDashboardService:
         questions = self._build_quiz_questions(
             text=text_pool,
             resources=chosen_resources,
-            question_count=max(min(question_count, 5), 2),
+            question_count=requested_question_count,
         )
         if not questions:
             raise ValueError("Could not generate quiz questions from the available notes")
@@ -1499,6 +1498,125 @@ class IntegratedDashboardService:
                 resources_by_session.setdefault(session["session_id"], []).append(resource)
                 known_titles.add(template["title"].casefold())
 
+    def _resolve_mutable_lecture_session(
+        self,
+        *,
+        session_id: str,
+        lecturer_id: str,
+    ) -> dict[str, Any]:
+        normalized_session_id = session_id.strip()
+        session = self.lecture_sessions.get(normalized_session_id)
+        if session is None and normalized_session_id.startswith("legacy-"):
+            session = self._materialize_legacy_lecture_session(
+                legacy_session_id=normalized_session_id,
+                lecturer_id=lecturer_id,
+            )
+        if session is None:
+            raise ValueError("Lecture session not found")
+        if session.get("lecturer_id") != lecturer_id.strip():
+            raise ValueError("Lecture session does not belong to this lecturer")
+        return session
+
+    def _materialize_legacy_lecture_session(
+        self,
+        *,
+        legacy_session_id: str,
+        lecturer_id: str,
+    ) -> dict[str, Any] | None:
+        resource_id = legacy_session_id.removeprefix("legacy-").strip()
+        if not resource_id:
+            return None
+
+        resource = self.course_service.get_resource(resource_id)
+        if resource is None:
+            return None
+        if resource.get("lecturer_id") != lecturer_id.strip():
+            raise ValueError("Lecture session does not belong to this lecturer")
+
+        course_code = str(resource.get("course_code") or "").strip().upper()
+        if not course_code:
+            raise ValueError("Legacy lecture resource is missing a course code")
+        self._validate_lecturer_course_access(lecturer_id=lecturer_id, course_code=course_code)
+
+        sessions = self.lecture_sessions.list(lecturer_id=lecturer_id.strip(), course_code=course_code)
+        session = self._matching_session_for_resource(resource=resource, sessions=sessions)
+        if session is None:
+            lecture_number = self._lecture_number(resource) or self._next_lecture_number(course_code)
+            created_at = str(resource.get("created_at") or utc_now_iso())
+            session = {
+                "session_id": uuid4().hex[:12],
+                "lecturer_id": lecturer_id.strip(),
+                "course_code": course_code,
+                "lecture_number": lecture_number,
+                "title": self._default_session_title(
+                    lecture_number,
+                    str(resource.get("topic") or "").strip() or None,
+                    str(resource.get("title") or "").strip() or None,
+                ),
+                "topic": str(resource.get("topic") or "").strip() or None,
+                "status": "Delivered",
+                "date_or_week": str(resource.get("week") or "").strip() or None,
+                "notes_text": self._legacy_resource_notes_text(resource),
+                "created_at": created_at,
+                "updated_at": utc_now_iso(),
+            }
+            session = self.lecture_sessions.upsert(session)
+
+        self._link_resource_to_session(resource=resource, session=session)
+        return self.lecture_sessions.get(session["session_id"]) or session
+
+    def _matching_session_for_resource(
+        self,
+        *,
+        resource: dict[str, Any],
+        sessions: list[dict[str, Any]],
+    ) -> dict[str, Any] | None:
+        resource_session_id = str(resource.get("session_id") or "").strip()
+        if resource_session_id:
+            exact_session = next(
+                (
+                    session
+                    for session in sessions
+                    if session.get("session_id") == resource_session_id
+                ),
+                None,
+            )
+            if exact_session is not None:
+                return exact_session
+
+        lecture_number = self._lecture_number(resource)
+        if lecture_number is None:
+            return None
+        return next(
+            (
+                session
+                for session in sessions
+                if int(session.get("lecture_number") or 0) == lecture_number
+            ),
+            None,
+        )
+
+    def _link_resource_to_session(
+        self,
+        *,
+        resource: dict[str, Any],
+        session: dict[str, Any],
+    ) -> None:
+        if resource.get("session_id") == session["session_id"]:
+            return
+        updated_resource = dict(resource)
+        updated_resource["session_id"] = session["session_id"]
+        if not updated_resource.get("topic") and session.get("topic"):
+            updated_resource["topic"] = session.get("topic")
+        if not updated_resource.get("week") and session.get("date_or_week"):
+            updated_resource["week"] = session.get("date_or_week")
+        self.course_service.resources.upsert(updated_resource)
+
+    def _legacy_resource_notes_text(self, resource: dict[str, Any]) -> str:
+        if resource.get("source_type") == "text":
+            return self._resource_text(resource["resource_id"])
+        return ""
+
     def _validate_lecturer_course_access(self, *, lecturer_id: str, course_code: str) -> None:
         user = self._lookup_user(expected_role="lecturer", lecturer_id=lecturer_id)
         if user is None:
@@ -1693,6 +1811,16 @@ class IntegratedDashboardService:
                 resources_by_session.setdefault(session_id, []).append(resource)
             else:
                 legacy_resources.append(resource)
+
+        if sessions and legacy_resources:
+            remaining_legacy_resources = []
+            for resource in legacy_resources:
+                session = self._matching_session_for_resource(resource=resource, sessions=sessions)
+                if session is None:
+                    remaining_legacy_resources.append(resource)
+                else:
+                    resources_by_session.setdefault(session["session_id"], []).append(resource)
+            legacy_resources = remaining_legacy_resources
 
         serialized_sessions: list[dict[str, Any]] = []
         for session in sessions:
