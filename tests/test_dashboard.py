@@ -206,7 +206,29 @@ class DashboardServiceTests(unittest.TestCase):
         self.assertEqual(timetable["student_id"], "S001")
         self.assertGreaterEqual(len(timetable["entries"]), 4)
         self.assertEqual(study_plan["student_id"], "S001")
+        self.assertEqual(study_plan["study_hours_per_week"], 14)
+        self.assertEqual(
+            sum(recommendation["recommended_hours"] for recommendation in study_plan["recommendations"]),
+            14,
+        )
         self.assertGreaterEqual(len(study_plan["recommendations"]), 1)
+
+    def test_study_plan_rebalances_course_hours_when_weekly_hours_change(self) -> None:
+        fourteen_hour_plan = self.service.generate_study_plan(student_id="S001", study_hours_per_week=14)
+        seven_hour_plan = self.service.generate_study_plan(student_id="S001", study_hours_per_week=7)
+
+        fourteen_hour_allocations = [
+            recommendation["recommended_hours"]
+            for recommendation in fourteen_hour_plan["recommendations"]
+        ]
+        seven_hour_allocations = [
+            recommendation["recommended_hours"]
+            for recommendation in seven_hour_plan["recommendations"]
+        ]
+
+        self.assertEqual(sum(fourteen_hour_allocations), 14)
+        self.assertEqual(sum(seven_hour_allocations), 7)
+        self.assertNotEqual(fourteen_hour_allocations, seven_hour_allocations)
 
     def test_quiz_generation_attempt_and_feedback_are_linked(self) -> None:
         self.service.upsert_profile(student_id="S001", nationality="Kenya")

@@ -137,6 +137,22 @@ function fillPreferredLanguageOptions(selectedCode = "") {
   `;
 }
 
+function fillLecturerCourseOptions(selectedCode = currentCourseCode()) {
+  const courses = state.workspace?.courses || [];
+  if (!courses.length && selectedCode) {
+    return `<option value="${escapeHtml(selectedCode)}" selected>${escapeHtml(selectedCode)}</option>`;
+  }
+  return courses
+    .map((course) => {
+      const courseCode = course.course_code || "";
+      const label = [courseCode, course.title || ""].filter(Boolean).join(" - ");
+      return `<option value="${escapeHtml(courseCode)}" ${
+        courseCode === selectedCode ? "selected" : ""
+      }>${escapeHtml(label || courseCode)}</option>`;
+    })
+    .join("");
+}
+
 function languageName(code) {
   if (!code) {
     return "Auto";
@@ -2239,7 +2255,9 @@ function renderLecturerModule(module) {
         <form id="quiz-generator-form" class="stack">
           <label>
             <span>Course Code</span>
-            <input type="text" id="quiz-course-code" value="${escapeHtml(currentCourseCode())}" required>
+            <select id="quiz-course-code" required>
+              ${fillLecturerCourseOptions()}
+            </select>
           </label>
           <label>
             <span>Topic</span>
@@ -2879,7 +2897,7 @@ async function handlePreferredLanguageSubmit(event) {
 
 async function uploadFilesToLectureSession(sessionId, files) {
   if (!files.length) {
-    return;
+    return null;
   }
 
   const formData = new FormData();
@@ -2887,9 +2905,8 @@ async function uploadFilesToLectureSession(sessionId, files) {
   for (const file of files) {
     formData.append("files", file);
   }
-  await requestJson(`/lecturer/sessions/${encodeURIComponent(sessionId)}/attachments`, {
+  return requestJson(`/lecturer/sessions/${encodeURIComponent(sessionId)}/attachments`, {
     method: "POST",
-    headers: {},
     body: formData,
   });
 }
@@ -2968,7 +2985,14 @@ async function handleLectureSessionUpdateSubmit(event) {
         notes_text: document.getElementById("session-edit-notes-text").value.trim() || null,
       }),
     });
-    showAppMessage("Lecture session details updated.", "success");
+    const files = Array.from(document.getElementById("session-attachment-files")?.files || []);
+    await uploadFilesToLectureSession(sessionId, files);
+    showAppMessage(
+      files.length
+        ? `Lecture session details updated and ${files.length} attachment(s) uploaded.`
+        : "Lecture session details updated.",
+      "success",
+    );
     await loadCurrentWorkspace(currentCourseCode());
   } catch (error) {
     showAppMessage(error.message, "error");
@@ -2980,6 +3004,9 @@ async function handleLectureSessionAttachmentsSubmit(event) {
   const sessionId = event.target.dataset.sessionId;
   try {
     const files = Array.from(document.getElementById("session-attachment-files").files || []);
+    if (!files.length) {
+      throw new Error("Choose at least one file before uploading attachments.");
+    }
     await uploadFilesToLectureSession(sessionId, files);
     showAppMessage("Attachments uploaded to the lecture session.", "success");
     await loadCurrentWorkspace(currentCourseCode());
@@ -3118,6 +3145,10 @@ async function handleCourseChange(event) {
   state.activeStudentLectureSessionId = null;
   if (event.target.id === "student-course-unit-select" && state.session?.role === "student") {
     state.activeCourseUnitCode = selectedCourse;
+  } else if (event.target.id === "quiz-course-code" && state.session?.role === "lecturer") {
+    state.activeLecturerRoomCode = selectedCourse;
+    state.activeLecturerQuizId = null;
+    state.activeLecturerSessionId = null;
   }
   await loadCurrentWorkspace(selectedCourse);
 }
@@ -3312,6 +3343,8 @@ function bindStaticEvents() {
   document.addEventListener("click", handleGlobalClick);
   document.addEventListener("change", (event) => {
     if (event.target.id === "student-course-unit-select") {
+      handleCourseChange(event).catch((error) => showAppMessage(error.message, "error"));
+    } else if (event.target.id === "quiz-course-code") {
       handleCourseChange(event).catch((error) => showAppMessage(error.message, "error"));
     } else if (event.target.id === "session-create-files") {
       renderPendingFileList(event.target, "session-create-file-list");

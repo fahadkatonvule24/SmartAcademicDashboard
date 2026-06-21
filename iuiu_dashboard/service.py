@@ -591,6 +591,9 @@ class IntegratedDashboardService:
         if user is None:
             raise ValueError("Student not found")
 
+        courses = [dict(course) for course in user.get("courses", [])]
+        self._ensure_mock_course_resources(courses=courses)
+        normalized_study_hours = self._normalize_study_hours(study_hours_per_week)
         recommendations = []
         quizzes = self.quizzes.list()
         attempts = self.quiz_attempts.list(student_id=student_id)
@@ -598,7 +601,7 @@ class IntegratedDashboardService:
         for attempt in attempts:
             attempts_by_quiz.setdefault(attempt["quiz_id"], []).append(attempt)
 
-        for course in user.get("courses", []):
+        for course in courses:
             course_quizzes = [quiz for quiz in quizzes if quiz.get("course_code") == course["course_code"]]
             course_attempts = []
             for quiz in course_quizzes:
@@ -620,13 +623,12 @@ class IntegratedDashboardService:
                 priority = "Medium"
                 reason = "Resources are available, but no quiz attempt has been recorded yet."
 
-            recommended_hours = 4 if priority == "High" else 3 if priority == "Medium" else 2
             recommendations.append(
                 {
                     "course_code": course["course_code"],
                     "title": course["title"],
                     "priority": priority,
-                    "recommended_hours": recommended_hours,
+                    "_study_weight": self._study_priority_weight(priority),
                     "reason": reason,
                     "next_action": self._study_focus_for_course(course["course_code"]),
                     "average_quiz_score": round(average, 1) if average is not None else None,
@@ -639,9 +641,17 @@ class IntegratedDashboardService:
                 item["course_code"],
             )
         )
+        allocated_hours = self._allocate_study_hours(
+            recommendations=recommendations,
+            study_hours_per_week=normalized_study_hours,
+        )
+        for recommendation, recommended_hours in zip(recommendations, allocated_hours, strict=False):
+            recommendation["recommended_hours"] = recommended_hours
+            recommendation.pop("_study_weight", None)
+
         payload = {
             "student_id": student_id.strip(),
-            "study_hours_per_week": max(int(study_hours_per_week), 6),
+            "study_hours_per_week": normalized_study_hours,
             "generated_at": utc_now_iso(),
             "recommendations": recommendations,
             "summary": (
@@ -650,6 +660,53 @@ class IntegratedDashboardService:
             ),
         }
         return self.study_plans.upsert(student_id.strip(), payload)
+
+    def _normalize_study_hours(self, study_hours_per_week: int) -> int:
+        try:
+            hours = int(study_hours_per_week)
+        except (TypeError, ValueError):
+            hours = 12
+        return min(max(hours, 4), 40)
+
+    def _study_priority_weight(self, priority: str) -> int:
+        return {"High": 4, "Medium": 3, "Steady": 2}.get(priority, 1)
+
+    def _allocate_study_hours(
+        self,
+        *,
+        recommendations: list[dict[str, Any]],
+        study_hours_per_week: int,
+    ) -> list[int]:
+        if not recommendations:
+            return []
+
+        remaining_hours = max(int(study_hours_per_week), 0)
+        allocations = [0 for _ in recommendations]
+        if remaining_hours >= len(recommendations):
+            allocations = [1 for _ in recommendations]
+            remaining_hours -= len(recommendations)
+
+        weighted_recommendations = [
+            (
+                index,
+                max(int(recommendation.get("_study_weight") or 1), 1),
+            )
+            for index, recommendation in enumerate(recommendations)
+        ]
+
+        while remaining_hours > 0:
+            index, _ = max(
+                weighted_recommendations,
+                key=lambda item: (
+                    item[1] / (allocations[item[0]] + 1),
+                    item[1],
+                    -item[0],
+                ),
+            )
+            allocations[index] += 1
+            remaining_hours -= 1
+
+        return allocations
 
     def list_student_quizzes(
         self,
