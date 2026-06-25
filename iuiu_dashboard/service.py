@@ -854,6 +854,10 @@ class IntegratedDashboardService:
 
         normalized_course = course_code.strip().upper()
         resource = self.course_service.get_resource(resource_id.strip()) if resource_id else None
+        if resource_id and resource is None:
+            raise ValueError("Resource not found")
+        if resource and str(resource.get("course_code", "")).strip().upper() != normalized_course:
+            raise ValueError("Selected resource does not belong to this course unit")
         lecturer_id = self._lecturer_id_for_course(normalized_course)
         if lecturer_id is None:
             raise ValueError("No lecturer mapping found for this course")

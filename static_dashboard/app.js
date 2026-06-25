@@ -153,6 +153,34 @@ function fillLecturerCourseOptions(selectedCode = currentCourseCode()) {
     .join("");
 }
 
+function fillStudentCourseUnitOptions(selectedCode = currentCourseCode()) {
+  const courses = state.workspace?.courses || [];
+  if (!courses.length && selectedCode) {
+    return `<option value="${escapeHtml(selectedCode)}" selected>${escapeHtml(selectedCode)}</option>`;
+  }
+  return courses
+    .map((course) => {
+      const courseCode = course.course_code || "";
+      const label = [courseCode, course.title || ""].filter(Boolean).join(" - ");
+      return `<option value="${escapeHtml(courseCode)}" ${
+        courseCode === selectedCode ? "selected" : ""
+      }>${escapeHtml(label || courseCode)}</option>`;
+    })
+    .join("");
+}
+
+function fillCourseResourceOptions(resources, selectedResourceId = "") {
+  return resources
+    .map(
+      (resource) => `
+        <option value="${escapeHtml(resource.resource_id)}" ${
+          resource.resource_id === selectedResourceId ? "selected" : ""
+        }>${escapeHtml(resource.material_label || resource.title || resource.resource_id)}</option>
+      `,
+    )
+    .join("");
+}
+
 function languageName(code) {
   if (!code) {
     return "Auto";
@@ -253,6 +281,10 @@ function isElearningModule(module = state.activeModule) {
   ].includes(module);
 }
 
+function isLearningRegistrationModule(module = state.activeModule) {
+  return ["my_registration", "my_timetable"].includes(module);
+}
+
 function activeShell() {
   return isElearningModule() ? "elearning" : "academica";
 }
@@ -343,6 +375,8 @@ function renderAcademicaSidebar() {
     `;
   }
 
+  const learningRegistrationOpen = isLearningRegistrationModule();
+
   return `
     <aside class="erp-sidebar">
       <div class="erp-logo-card">${renderAcademicaLogo()}</div>
@@ -350,12 +384,12 @@ function renderAcademicaSidebar() {
         ${erpNavButton({ module: "announcements", label: "Notifications", icon: "&#9888;" })}
         ${erpNavButton({ module: "profile", label: "My Profile", icon: "&#9787;" })}
         ${erpNavButton({ module: "elearning_dashboard", label: "E-learning Centre", icon: "&#9673;", activeWhen: () => isElearningModule() })}
-        <div class="erp-menu-group${state.activeModule === "my_registration" ? " is-open" : ""}">
-          ${erpNavButton({ module: "my_registration", label: "Learning & Registration", icon: "&#9632;" })}
-          ${state.activeModule === "my_registration" ? `
+        ${erpNavButton({ module: "feedback_to_lecturer", label: "Feedback to Lecturer", icon: "&#9993;" })}
+        <div class="erp-menu-group${learningRegistrationOpen ? " is-open" : ""}">
+          ${erpNavButton({ module: "my_registration", label: "Learning & Registration", icon: "&#9632;", activeWhen: () => learningRegistrationOpen })}
+          ${learningRegistrationOpen ? `
             ${erpNavButton({ module: "my_registration", label: "Courses & Registration", icon: "&#9636;", child: true })}
             ${erpNavButton({ module: "my_registration", label: "Retake Registration", icon: "&#8644;", child: true })}
-            ${erpNavButton({ module: "feedback_to_lecturer", label: "Lecturer Evaluation", icon: "&#9745;", child: true })}
             ${erpNavButton({ module: "my_timetable", label: "Timetable Info", icon: "&#9635;", child: true })}
           ` : ""}
         </div>
@@ -379,6 +413,7 @@ function renderElearningSidebar() {
     { module: "elearning_dashboard", label: "My Dashboard", icon: "&#9634;" },
     { module: "e_learning_centre", label: "My Digital Classes", icon: "&#9787;" },
     { module: "my_examinations", label: "My Examinations", icon: "&#9635;", activeWhen: () => state.activeModule === "quiz_centre" || state.activeModule === "my_examinations" },
+    { module: "feedback_to_lecturer", label: "Feedback to Lecturer", icon: "&#9993;" },
     { module: "elearning_profile", label: "My Profile", icon: "&#9790;" },
     { module: "study_planner", label: "User Guide", icon: "&#9635;" },
   ];
@@ -1104,15 +1139,7 @@ function renderStudentCourseUnits(workspace) {
 }
 
 function renderStudentCourseSelector(workspace) {
-  const options = (workspace.courses || [])
-    .map(
-      (course) => `
-        <option value="${escapeHtml(course.course_code)}" ${
-          course.course_code === currentCourseCode() ? "selected" : ""
-        }>${escapeHtml(course.course_code)} - ${escapeHtml(course.title)}</option>
-      `,
-    )
-    .join("");
+  const options = fillStudentCourseUnitOptions();
 
   if (!options) {
     return "";
@@ -1832,11 +1859,25 @@ function renderLibraryErp(workspace) {
 }
 
 function renderFeedbackErp(workspace) {
+  const resources = workspace.resources || [];
+  const resourceOptions = fillCourseResourceOptions(resources, state.activeResourceId || "");
+  const hasResources = resources.length > 0;
   return renderLegacyPanel({
-    title: "LECTURER EVALUATION",
-    icon: "&#9745;",
+    title: "FEEDBACK TO LECTURER",
+    icon: "&#9993;",
     body: `
       <form id="feedback-form" class="legacy-form">
+        <label>
+          <span>Course unit</span>
+          <select id="feedback-course-code" required>${fillStudentCourseUnitOptions()}</select>
+        </label>
+        <label>
+          <span>Course resource</span>
+          <select id="feedback-resource-id" ${hasResources ? "required" : "disabled"}>
+            <option value="">${hasResources ? "Select course resource" : "No resources are available for this course"}</option>
+            ${resourceOptions}
+          </select>
+        </label>
         <label><span>Difficulty area</span><input type="text" id="feedback-difficulty" placeholder="Example: ERP workflow mapping" required></label>
         <label><span>Topic</span><input type="text" id="feedback-topic" placeholder="Optional topic"></label>
         <label><span>Comment / question</span><textarea id="feedback-comment" rows="4" required></textarea></label>
@@ -1844,10 +1885,11 @@ function renderFeedbackErp(workspace) {
       </form>
       <div class="legacy-table-wrap">
         ${renderLegacyTable({
-          columns: ["#", "Course", "Difficulty Area", "Comment"],
+          columns: ["#", "Course", "Resource", "Difficulty Area", "Comment"],
           rows: (workspace.feedback_history || []).map((entry, index) => [
             index + 1,
             entry.course_code,
+            entry.resource_title || "-",
             entry.difficulty_area,
             entry.comment,
           ]),
@@ -2565,6 +2607,7 @@ function renderLecturerFeedback(payload) {
                   <div class="helper">${escapeHtml(
                     [entry.course_code, entry.topic || entry.difficulty_area].filter(Boolean).join(" | "),
                   )}</div>
+                  <div class="helper">${escapeHtml(`Resource: ${entry.resource_title || "No resource selected"}`)}</div>
                   <div class="helper">${escapeHtml(entry.comment)}</div>
                 </article>
               `,
@@ -2859,20 +2902,23 @@ async function handleStudyPlanSubmit(event) {
 
 async function handleFeedbackSubmit(event) {
   event.preventDefault();
+  const courseCode = document.getElementById("feedback-course-code")?.value.trim() || currentCourseCode();
+  const resourceId = document.getElementById("feedback-resource-id")?.value.trim() || null;
   try {
     await requestJson("/student/feedback", {
       method: "POST",
       body: JSON.stringify({
         student_id: state.session.student_id,
-        course_code: currentCourseCode(),
+        course_code: courseCode,
         difficulty_area: document.getElementById("feedback-difficulty").value.trim(),
         topic: document.getElementById("feedback-topic").value.trim() || null,
         comment: document.getElementById("feedback-comment").value.trim(),
-        resource_id: state.activeResourceId || null,
+        resource_id: resourceId,
       }),
     });
     showAppMessage("Feedback sent to the lecturer.", "success");
-    await loadCurrentWorkspace();
+    state.activeResourceId = resourceId;
+    await loadCurrentWorkspace(courseCode);
   } catch (error) {
     showAppMessage(error.message, "error");
   }
@@ -3145,6 +3191,8 @@ async function handleCourseChange(event) {
   state.activeStudentLectureSessionId = null;
   if (event.target.id === "student-course-unit-select" && state.session?.role === "student") {
     state.activeCourseUnitCode = selectedCourse;
+  } else if (event.target.id === "feedback-course-code" && state.session?.role === "student") {
+    state.activeCourseUnitCode = null;
   } else if (event.target.id === "quiz-course-code" && state.session?.role === "lecturer") {
     state.activeLecturerRoomCode = selectedCourse;
     state.activeLecturerQuizId = null;
@@ -3344,6 +3392,10 @@ function bindStaticEvents() {
   document.addEventListener("change", (event) => {
     if (event.target.id === "student-course-unit-select") {
       handleCourseChange(event).catch((error) => showAppMessage(error.message, "error"));
+    } else if (event.target.id === "feedback-course-code") {
+      handleCourseChange(event).catch((error) => showAppMessage(error.message, "error"));
+    } else if (event.target.id === "feedback-resource-id") {
+      state.activeResourceId = event.target.value || null;
     } else if (event.target.id === "quiz-course-code") {
       handleCourseChange(event).catch((error) => showAppMessage(error.message, "error"));
     } else if (event.target.id === "session-create-files") {

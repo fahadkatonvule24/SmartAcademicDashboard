@@ -732,12 +732,37 @@ textarea:focus {
 .quiz-options {
   display: grid;
   gap: 0.6rem;
+  margin-top: 0.75rem;
 }
 
 .option-row {
-  display: flex;
-  gap: 0.6rem;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 0.7rem;
   align-items: center;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(20, 29, 18, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.76);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.option-row input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  justify-self: start;
+  accent-color: var(--tile);
+}
+
+.option-row span {
+  min-width: 0;
+  color: var(--ink);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .chat-fab {
@@ -3707,6 +3732,19 @@ body::after,
   background: #fff;
   box-shadow: none;
   font-size: 12px;
+}
+
+.elearn-page .quiz-attempt-form .option-row {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+}
+
+.elearn-page .quiz-attempt-form .option-row input[type="radio"] {
+  width: 18px;
+  min-height: 18px;
+  height: 18px;
+  padding: 0;
 }
 
 .elearn-page .ghost-button,
